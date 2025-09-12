@@ -5,49 +5,67 @@ date: today
 
 # Part 1: Theoretical
 
-
 ### With APIs, you could do this? 
--> not more than 2-3 min
--> teaser: this is what you could do with an API, and so much more 
--> you probably heard of it already
-```{r}
-# fetch kofdata data, plot
+
+- not more than 2-3 min
+- you've probably heard of APIs already
+- teaser: this is what you could do with an API, and so much more 
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(kofdata)
+library(stats)
+baro_vint <- get_collection("globalbaro_vintages")
+baro_20210 <- baro_vint$`globalbaro_leading_2020-10`
+
+plot_both <- stats::ts.plot(
+  baro_20210,
+  gpars = list(
+    xlab = "Year",
+    ylab = "Value",
+    main = "Global Barometer of 2020-10"
+  )
+)
 ```
 
+
 ### Who am I?
--> used to take this lecture
--> work in the institute that produces this data (i just showed you)
 
-## How does it work?
+- used to take this lecture
+- work in the institute that produces the data i just showed you
 
-### Humanly, what would you do?
--> how do we get data from the internet (let's say you don't have the .csv file on your computer)
+### How does it work?
+
+#### Humanly, what would you do?
+
+- how do we get data from the internet (let's say you don't have the .csv file on your computer)
 <!-- TODO: use this for the blog post!!! -->
--> we would go to the internet, get the data from the tabelle from the website (screenshot von einer website)
--> highlight the table we want, how do we get this data
--> what if you want to do this more often? -> umständlich! 
+- we would go to the internet, get the data from the tabelle from the website (screenshot von einer website)
+- highlight the table we want, how do we get this data
+- what if you want to do this more often? -> umständlich! 
 
-### computer does it this way
--> wir schreiben ein computerprogramm
--> how does it use the website & get the data into our programm
--> let's look at a visual example 
+#### computer does it this way
 
-## OpenAPI (Swagger) Example
+- (we) write a computer program
+- how does it use the website & get the data into our programm
+- let's look at a visual example 
+
+### OpenAPI (Swagger) Example
 <!-- TODO: decide how to do this? in class, live? or via screenshots, or in IDE? -->
 Let's pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.
 
-### general overview 
+#### general overview 
 this is what a REST API (visualisation) can look like:
 ![pet-store](/img/pet-store.png)
 
-### highlight certain things
+#### highlight certain things
 ![pet-store-ext](/img/pet-store-extended.jpg)
 what do we want to see here?
 - exchange data using HTTP (internet protocol)
 - set of functions like GET, PUT, DELETE, etc. that clients can use to access server data.
 - endpoints
 
-### use an endpoint
+####  use an endpoint
 ![pet-by-id](/img/pet-by-id.png)
 
 highlight:
@@ -56,21 +74,27 @@ highlight:
 - data 
 - API Keys
 
-## (maybe) History of API Protocols?
--> from ok to better, intuitive
-### SOAP APIs
--> not json/yaml but xml
-### REST APIs 
--> most popular
--> specifies standard HTTP methods ->(put, post, get, delete)
--> statelessness (no saving data)
+### (maybe) History of API Protocols?
+
+- from ok to better, intuitive
+
+#### SOAP APIs
+- not json/yaml but xml
+- less flexible than REST
+
+#### REST APIs 
+
+- most popular
+- specifies standard HTTP methods ->(put, post, get, delete)
+- statelessness (no saving data)
 
 
 ## But **why** APIs for us? 
--> automation
--> easier to fetch specific data (specify time, specific indicators)
--> real time data
--> API usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
+
+- automation
+- easier to fetch specific data (specify time, specific indicators)
+- real time data
+- API usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
 
 ### But **how** APIs for us?
 
@@ -84,11 +108,14 @@ highlight:
 <!-- TODO: practice querying first, i.e. get world population, without API wrappers  -->
 
 ### Ex 1.
--> get one economic time series with an established API wrapper (kofdata or other)
+
+- get one economic time series with an established API wrapper (kofdata or other)
 
 ### Ex 2. (prep for schoki beispiel)
--> build your own wrapper (easy & quick?)
+
+- build your own wrapper (easy & quick?)
 
 ### Ex 3. Schoki Beispiel
--> combine the two 
--> get correlation or something (forecast?)
+
+- combine the two 
+- get correlation or something (forecast?)
