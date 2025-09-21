@@ -138,8 +138,21 @@ function() {
 
 # with: curl -X 'GET' \ 'http://127.0.0.1:41825/filtered_data?start=2010' \ -H 'accept: */*'
 
+# plumb(file='plumber.R')$run()
+
 ```
 
+When running (=plumbing) this file, it looks like this:
+
+![Swagger Documentation of our API](img/endpoints.png)
+
+Let's try out the endpoint `/filtered_data`
+
+![Inspecting the Endpoint](img/get_params.png)
+
+When we execute this, what do we get?
+
+![Time Series Data](img/get_requests.png)
 
 ### 2. Create your own Wrapper
 
