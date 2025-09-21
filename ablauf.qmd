@@ -10,6 +10,7 @@ date: today
 - not more than 2-3 min
 - you've probably heard of APIs already
 - teaser: this is what you could do with an API, and so much more 
+<!-- TODO: figure out a way to do this live, this is the backup -->
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 
@@ -34,6 +35,11 @@ plot_both <- stats::ts.plot(
 - used to take this lecture
 - work in the institute that produces the data i just showed you
 
+### What will you know by the end of these 2h?
+- gain a better understanding of how APIs are used
+- build your own mini wrapper
+- maybe understand in future when APIs are used, and recognize them in the wild. 
+
 ### How does it work?
 
 #### Humanly, what would you do?
@@ -50,8 +56,29 @@ plot_both <- stats::ts.plot(
 - how does it use the website & get the data into our programm
 - let's look at a visual example 
 
+## Terminology (of REST APIs)
+<!-- REpresentational State Transfer. A REST API is one that adheres to six specific architectural constraints (client/server, statelessness, cache, uniform interface, layered system) that make interacting with them easier and less resource intensive. -->
+<!-- most important part: statelessness - when you request something from the server, it doesn’t change the state of the server. -->
+- APIs
+- Endpoint (PUT, POST, DELETE, GET)
+- Wrapper 
+
+To really cement this, as it is important for you to understand and differentiate, here are 2 ways to explain this:
+- analogy of an onion (conceptually)
+- openAPI (applied/visually)
+- if you want to see it in practice (see blogpost)
+
+### Support Terminology through Analogy of an Onion:
+- the magic of before works, because API wrapper (this wraps an API function call, makes it easier to execute for people who don't want to read the API documentation or know how it works)
+
+- but we want to know how it works! 
+<!-- TODO: expand on this, include grafik, oder irgendwas dergleichen -->
+- API (Application Programming interface. (machine-to-machine))
+- endpoint (urls where various requests should be sent)
+- API wrapper
+
 ### OpenAPI (Swagger) Example
-<!-- TODO: decide how to do this? in class, live? or via screenshots, or in IDE? -->
+<!-- TODO: decide how to do this? in class, live aka with Rscript? or via screenshots, or in IDE? -->
 Let's pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.
 
 #### general overview 
@@ -73,20 +100,6 @@ highlight:
 - responses (different types, different meanings)
 - data 
 - API Keys
-
-### (maybe) History of API Protocols?
-
-- from ok to better, intuitive
-
-#### SOAP APIs
-- not json/yaml but xml
-- less flexible than REST
-
-#### REST APIs 
-
-- most popular
-- specifies standard HTTP methods ->(put, post, get, delete)
-- statelessness (no saving data)
 
 
 ## But **why** APIs for us? 

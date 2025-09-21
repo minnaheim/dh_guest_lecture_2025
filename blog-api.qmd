@@ -1,0 +1,192 @@
+---
+title: How do APIs work, conceptually?
+name: Minna
+date: today
+---
+
+## Analogy, how would humans do it?
+
+#### Humanly, what would you do?
+
+- how do we get data from the internet (let's say you don't have the .csv file on your computer)
+<!-- TODO: use this for the blog post!!! -->
+- we would go to the internet, get the data from the tabelle from the website (screenshot von einer website)
+- highlight the table we want, how do we get this data
+- what if you want to do this more often? -> umständlich! 
+
+#### computer does it this way
+
+- how does it use the website & get the data into our programm
+- (we) write a computer program
+- needs to be standardized -> protocol & documentation
+
+1. list of methods to call from server (=functions) -> CRUD
+2. parameters (keys, data, IDs, etc.)
+3. send request with 1. & 2. contained.
+4. get response (code -> what do the common ones mean? 2** vs. 4**)
+5. specify how to handle return value of request (contains data)
+
+#### Example, visually
+
+<!-- chuck norris joke, or country population or something -->
+![](img/chuck-norris.png)
+
+#### What's the benefit of doing it this way?
+
+- automation
+- easier to fetch specific data (specify time, specific indicators)
+- real time data
+- API usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
+
+
+## Terminology 
+=> API = Application Programming interface. (machine-to-machine) 
+- An API receives inbound requests and sends outbound responses. You make a request, the API passes that request to a server, and then waits for the server's response. 
+=> Was ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE. 
+=> Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
+=> API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen
+
+
+## DIY - how do the different terminologies look in code
+
+### 1. Create your own API
+
+using {plumber} you can create your own Web API in R. 
+
+Let's say, we want to share a certain time series with the world, so we create an API
+
+```{r, echo=FALSE}
+# install the latest version
+# devtools::install_github("KOF-ch/kofdata")
+library(kofdata)
+list_available_collections()
+data <- get_time_series("kofbarometer", show_progress = TRUE)
+str(data$kofbarometer)
+```
+
+write the function that we will apply to create the API
+```{r}
+#* @param start date at which ts should start - can be years only, or c(year, month)
+#* @param end date at which ts should end - can be years only, or c(year, month)
+
+partition_ts <- function(ts, start = NULL, end = NULL){
+  if(inherits(ts, "ts")){
+    # setting start and end date if unset
+    if(is.null(end)){
+      end <- time(ts)[length(ts)]
+    }
+    if (is.null(start)){
+      start <- time(ts)[1]
+    }
+    # filter ts based on start & end dates
+    ts <- window(ts, start = start, end = end)
+  }
+  else {
+    warning("Input is not a ts object")
+    return(NULL)
+  }
+  return(ts)
+}
+
+partition_ts(data$kofbarometer, end= c(2010,2))
+```
+
+create the plumber api
+<!-- TODO: get the param setting of start and end date to work -->
+
+```{r}
+# to actually create an API, need to run this (& functions above) in a file called plumber.R in the RStudio IDE
+
+library(plumber)
+#* get entire time series data
+#* @get /data
+function(){
+  # list(msg = paste0("does this work?"))
+  partition_ts(data$kofbarometer)
+}
+
+
+#* Get data w/ start and end dates.
+#* @param start the start year to filter by
+#* @param end the end year to filter by
+#* @get /filtered_data
+
+function(start=NULL, end=NULL){
+  if(!is.null(start)){
+    start <- as.numeric(start)
+  }
+  if(!is.null(end)){
+    end <- as.numeric(end)
+  } 
+  
+  partition_ts(
+    data$kofbarometer,
+    start = start,
+    end = end
+  )
+}
+
+#* Plot the entire ts
+#* @serializer png
+#* @get /plotting
+function(){
+  plot(data$kofbarometer)
+}
+
+# run in console
+# pr("plumber.R") %>%
+#   pr_run(port=8000)
+
+# with: curl -X 'GET' \ 'http://127.0.0.1:41825/filtered_data?start=2010' \ -H 'accept: */*'
+
+```
+
+
+### 2. Create your own Wrapper
+
+using the {httr2 package} - Let's say we know people only want to get the kofbarometer until 2019, since from 2020 onwards, the data is different, so we create an API wrapper, around the previously written /filtered_data endpoint to get only the data until 2019
+
+<!-- TODO: figure out how to use the API just created to get only data until 2020. -->
+
+```{r}
+# install.packages("httr")
+library(httr)
+library(jsonlite)
+
+
+kofbaro_until_2020 <- function(){
+
+  base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
+  query <- list(
+    keys = ts_key,
+    df = "Y-m-d"
+  )
+
+  # if (!is.null(start)) query$start <- start
+  # if (!is.null(end)) query$end <- end
+
+  response <- GET(base_url, query = query)
+    
+  data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
+
+  return(data)
+
+}
+
+
+
+```
+
+
+### 3. With an existing API Wrapper 
+
+using {kofdata}
+
+```{r}
+# install the latest version
+# devtools::install_github("KOF-ch/kofdata")
+library(kofdata)
+data <- get_time_series("kofbarometer", show_progress = TRUE)
+```
+
+The End.
