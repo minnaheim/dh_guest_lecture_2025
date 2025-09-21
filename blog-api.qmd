@@ -167,6 +167,7 @@ library(jsonlite)
 
 
 kofbaro_until_2020 <- function() {
+  #TODO: HIER MUSS ICH DAS NOCH VON DEM OBEN ERSTELLTEN API GETTEN, NICHT VON KOFDATA!
   base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
   query <- list(
     keys = ts_key,
