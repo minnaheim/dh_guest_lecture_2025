@@ -55,11 +55,11 @@ using {plumber} you can create your own Web API in R.
 
 Let's say, we want to share a certain time series with the world, so we create an API
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 # install the latest version
 # devtools::install_github("KOF-ch/kofdata")
 library(kofdata)
-list_available_collections()
+# list_available_collections()
 data <- get_time_series("kofbarometer", show_progress = TRUE)
 str(data$kofbarometer)
 ```
@@ -69,26 +69,25 @@ write the function that we will apply to create the API
 #* @param start date at which ts should start - can be years only, or c(year, month)
 #* @param end date at which ts should end - can be years only, or c(year, month)
 
-partition_ts <- function(ts, start = NULL, end = NULL){
-  if(inherits(ts, "ts")){
+partition_ts <- function(ts, start = NULL, end = NULL) {
+  if (inherits(ts, "ts")) {
     # setting start and end date if unset
-    if(is.null(end)){
+    if (is.null(end)) {
       end <- time(ts)[length(ts)]
     }
-    if (is.null(start)){
+    if (is.null(start)) {
       start <- time(ts)[1]
     }
     # filter ts based on start & end dates
     ts <- window(ts, start = start, end = end)
-  }
-  else {
+  } else {
     warning("Input is not a ts object")
     return(NULL)
   }
   return(ts)
 }
-
-partition_ts(data$kofbarometer, end= c(2010,2))
+# let's pretend the data comes from my own source
+partition_ts(data$kofbarometer, end = c(2010, 2))
 ```
 
 create the plumber api
@@ -100,7 +99,7 @@ create the plumber api
 library(plumber)
 #* get entire time series data
 #* @get /data
-function(){
+function() {
   # list(msg = paste0("does this work?"))
   partition_ts(data$kofbarometer)
 }
@@ -111,14 +110,14 @@ function(){
 #* @param end the end year to filter by
 #* @get /filtered_data
 
-function(start=NULL, end=NULL){
-  if(!is.null(start)){
+function(start = NULL, end = NULL) {
+  if (!is.null(start)) {
     start <- as.numeric(start)
   }
-  if(!is.null(end)){
+  if (!is.null(end)) {
     end <- as.numeric(end)
-  } 
-  
+  }
+
   partition_ts(
     data$kofbarometer,
     start = start,
@@ -129,7 +128,7 @@ function(start=NULL, end=NULL){
 #* Plot the entire ts
 #* @serializer png
 #* @get /plotting
-function(){
+function() {
   plot(data$kofbarometer)
 }
 
@@ -154,8 +153,7 @@ library(httr)
 library(jsonlite)
 
 
-kofbaro_until_2020 <- function(){
-
+kofbaro_until_2020 <- function() {
   base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
   query <- list(
     keys = ts_key,
@@ -166,11 +164,10 @@ kofbaro_until_2020 <- function(){
   # if (!is.null(end)) query$end <- end
 
   response <- GET(base_url, query = query)
-    
+
   data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
 
   return(data)
-
 }
 
 
@@ -187,6 +184,7 @@ using {kofdata}
 # devtools::install_github("KOF-ch/kofdata")
 library(kofdata)
 data <- get_time_series("kofbarometer", show_progress = TRUE)
+plot(data$kofbarometer)
 ```
 
 The End.
