@@ -58,7 +58,7 @@ plot_both <- stats::ts.plot(
 
 ## Terminology (of REST APIs)
 <!-- REpresentational State Transfer. A REST API is one that adheres to six specific architectural constraints (client/server, statelessness, cache, uniform interface, layered system) that make interacting with them easier and less resource intensive. -->
-<!-- most important part: statelessness - when you request something from the server, it doesn’t change the state of the server. -->
+<!-- most important part: statelessness - when you request something from the server, it doesn’t change the state of the server. language agnostic -->
 - APIs
 - Endpoint (PUT, POST, DELETE, GET)
 - Wrapper 

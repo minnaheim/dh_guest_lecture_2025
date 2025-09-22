@@ -21,9 +21,9 @@ date: today
 - needs to be standardized -> protocol & documentation
 
 1. list of methods to call from server (=functions) -> CRUD
-2. parameters (keys, data, IDs, etc.)
+2. parameters (keys, data, IDs, etc.) -> url = query, path
 3. send request with 1. & 2. contained.
-4. get response (code -> what do the common ones mean? 2** vs. 4**)
+4. get response (code -> what do the common ones mean? 2** vs. 4**) -> do this later
 5. specify how to handle return value of request (contains data)
 
 #### Example, visually
@@ -41,7 +41,7 @@ date: today
 
 ## Terminology 
 - API = Application Programming interface. (machine-to-machine) 
-- An API receives inbound requests and sends outbound responses. You make a request, the API passes that request to a server, and then waits for the server's response. 
+- An API receives inbound requests and sends outbound responses. the client makes a HTTP request to the API server, the API defines  and then waits for the server's response. 
 - Was ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE. 
 - Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
 - API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen
@@ -95,7 +95,7 @@ create the plumber api
 ```r
 
 library(plumber)
-#* get entire time series data
+#* return entire time series data
 #* @get /data
 function() {
   # list(msg = paste0("does this work?"))
@@ -103,7 +103,7 @@ function() {
 }
 
 
-#* Get data w/ start and end dates.
+#* return data w/ start and end dates.
 #* @param start the start year to filter by
 #* @param end the end year to filter by
 #* @get /filtered_data
@@ -123,7 +123,7 @@ function(start = NULL, end = NULL) {
   )
 }
 
-#* Plot the entire ts
+#* return the Plot the entire ts
 #* @serializer png
 #* @get /plotting
 function() {
@@ -152,11 +152,16 @@ When running (=plumbing) this file, it looks like this:
 
 Let's try out the endpoint `/filtered_data`
 
-![Inspecting the Endpoint](img/get_params.png)
+![Setting Params for the Request](img/set_params.png)
 
 When we execute this, what do we get?
 
 ![Time Series Data](img/get_requests.png)
+
+IMPORTANT IS: Swagger is just a documentation aid, it helps visualise the endpoints, and run requests.
+In real life, a request & response can look like this:
+
+![Real Call](img/real_call.png)
 
 ### 2. Create your own Wrapper
 
