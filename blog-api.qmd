@@ -40,11 +40,11 @@ date: today
 
 
 ## Terminology 
-=> API = Application Programming interface. (machine-to-machine) 
+- API = Application Programming interface. (machine-to-machine) 
 - An API receives inbound requests and sends outbound responses. You make a request, the API passes that request to a server, and then waits for the server's response. 
-=> Was ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE. 
-=> Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
-=> API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen
+- Was ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE. 
+- Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
+- API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen
 
 
 ## DIY - how do the different terminologies look in code
@@ -53,7 +53,7 @@ date: today
 
 using {plumber} you can create your own Web API in R. 
 
-Let's say, we want to share a certain time series with the world, so we create an API
+Let's say, we want to share a certain time series with the world, so we create an API - we define the 
 
 ```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 # install the latest version
@@ -64,8 +64,8 @@ data <- get_time_series("kofbarometer", show_progress = TRUE)
 str(data$kofbarometer)
 ```
 
-write the function that we will apply to create the API
-```{r}
+write the function that we will apply to create the API - aka how to filter a time series as to only get data in certain time frames.
+```r
 #* @param start date at which ts should start - can be years only, or c(year, month)
 #* @param end date at which ts should end - can be years only, or c(year, month)
 
@@ -91,10 +91,8 @@ partition_ts(data$kofbarometer, end = c(2010, 2))
 ```
 
 create the plumber api
-<!-- TODO: get the param setting of start and end date to work -->
 
-```{r}
-# to actually create an API, need to run this (& functions above) in a file called plumber.R in the RStudio IDE
+```r
 
 library(plumber)
 #* get entire time series data
@@ -132,15 +130,21 @@ function() {
   plot(data$kofbarometer)
 }
 
-# run in console
-# pr("plumber.R") %>%
-#   pr_run(port=8000)
-
-# with: curl -X 'GET' \ 'http://127.0.0.1:41825/filtered_data?start=2010' \ -H 'accept: */*'
-
-# plumb(file='plumber.R')$run()
-
 ```
+
+::: {.callout-tip}
+
+To actually create your API, you can run the code snippets above in a file called plumber.R in the RStudio IDE, or run the following in your R console: 
+
+```r
+# to set the port 
+ pr("plumber.R") %>%
+   pr_run(port=8000)
+
+plumb(file='plumber.R')$run()
+```
+
+:::
 
 When running (=plumbing) this file, it looks like this:
 
@@ -183,8 +187,6 @@ kofbaro_until_2020 <- function() {
 
   return(data)
 }
-
-
 
 ```
 
