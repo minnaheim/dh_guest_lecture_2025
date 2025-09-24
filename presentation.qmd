@@ -1,0 +1,226 @@
+---
+title: "Guest Lecture 2025"
+subtitle: "API Usage for Economic Data"
+format:
+  revealjs:
+    slide-number: true
+    logo: img/rseed-pos.png
+    css: styles/logo.css
+---
+
+## Intro {visibility="hidden"}
+```{r, hide=TRUE}
+devtools::install_github("KOF-ch/kofdata")
+```
+
+
+<!-- 
+- not more than 2-3 min
+- you've probably heard of APIs already
+- teaser: this is what you could do with an API (not the plotting, but getting data), and so much more  -->
+
+## Monitoring the Swiss Economy {.smaller}
+<!-- TODO: use lindt & sprüngli data -->
+
+```{r, echo=FALSE,results='hide',fig.keep='all'}
+library(kofdata)
+library(stats)
+baro_vint <- get_collection("globalbaro_vintages")
+baro_20210 <- baro_vint$`globalbaro_leading_2020-10`
+
+plot_both <- stats::ts.plot(
+  baro_20210,
+  gpars = list(
+    xlab = "Year",
+    ylab = "Value",
+    main = "Global Barometer of 2020-10"
+  )
+)
+
+plot_both
+```
+
+## About me 
+
+- I took this course 4 years ago!
+- Doing a Master in Data Science & minor in Economics at UZH
+- Working at KOF-ETH
+
+<!-- 
+- work in the institute that produces the data i just showed you -->
+
+## About the institute and my work
+
+
+:::: {.columns}
+::: {.column width="40%"}
+![](img/ETH_Fremdmedienlogo_KOF_horizontal_pos.png)
+![](img/rseed-pos.png)
+![](img/h4sci-logo-web.svg){width="50%"}
+:::
+
+::: {.column width="60%"}
+- From surveys to innovation to forecasting
+- Supporting researchers with research software (= R packages)
+- Teaching doctoral students to work with data & co. 
+:::
+::::
+
+## What will you know by the end of this Lecture?
+- gain a better understanding of how APIs are used
+<!-- TODO: scope to be determined -->
+- (maybe) build your own mini wrapper
+- understand in future when APIs are used, and recognize them in the wild. 
+
+# Let's say, you're want to get some stock data 
+<!-- TODO: put this into one slide, with subset? -->
+
+<!-- 
+- let's say we want to get the stock prices of lindt & sprüngli for the last month
+- how do we get data from the internet (let's say you don't have the .csv file on your computer)
+- we would go to the internet, get the data from the Tabelle from the website 
+- highlight the table we want, how do we get this data?
+- copy paste into a .csv file, then import
+- clean, etc. 
+- what if you want to do this more often? -> umständlich! 
+-->
+# "Human Way"
+
+## Check out Yahoo Data
+<!-- TODO: center this -->
+![](/img/yahoo_lisn.png)
+
+## Find a Data Table
+![](/img/lisn_table.png)
+
+## Copy data into IDE
+![](/img/imported_lisn.png)
+
+## Import Data {.smaller}
+
+::: {.panel-tabset}
+
+### Code 
+```r 
+library(readr)
+library(utils)
+
+# Read all lines as a single column
+
+raw_data <- readLines("lisn-sw.txt")
+
+# The first 7 lines are headers
+headers <- raw_data[1:7]
+
+data_lines <- raw_data[-(1:7)]
+
+# set the column and row lengths
+n_cols <- length(headers)
+n_rows <- length(data_lines) / n_cols
+
+# Create matrix and convert to data frame
+data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
+data <- as.data.frame(data_matrix)
+colnames(data) <- headers
+
+head(data)
+```
+<!-- and that's without the right formats! -->
+
+### Data
+```{r import data}
+library(readr)
+library(utils)
+
+# Read all lines as a single column
+
+raw_data <- readLines("yahoo_finance_example/lisn-sw.txt")
+
+# The first 7 lines are headers
+headers <- raw_data[1:7]
+
+data_lines <- raw_data[-(1:7)]
+
+# set the column and row lengths
+n_cols <- length(headers)
+n_rows <- length(data_lines) / n_cols
+
+# Create matrix and convert to data frame
+data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
+data <- as.data.frame(data_matrix)
+colnames(data) <- headers
+
+
+head(data, n = 12)
+```
+
+:::
+
+# "API/programming way" (work in progress)
+
+<!-- 
+- (we) write a computer program (=R script)
+- follows the protocol
+-->
+
+## 1. Using an (unofficial) link {.smaller}
+<!-- - no more yahoo finance API
+- closed down in 2017 -->
+ 
+::: {.panel-tabset}
+
+### link
+
+We can use the link:
+
+`https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1dyaho&events=history`
+
+- ticker = `LISN.SW`
+- period1 = 24.08.2025 
+- period2 = 24.09.2025
+- interval = 1 day
+- events = history (= historical prices)
+
+<!-- 
+ https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1d&events=history
+ period1 = 1756052365 (24.08.2025)
+ period2 = 1758730765 (24.09.2025) -->
+
+### output
+
+![](/img/yahoo_fin_query.png)
+
+:::
+
+## 2. use API Wrapper {.smaller}
+
+::: {.panel-tabset}
+
+### code
+
+```r
+# install.packages("quantmod")
+library(quantmod)
+
+# calls data into workspace, prints ticker
+getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
+
+# inspect data
+head(LISN.SW)
+```
+
+### output
+```{r}
+# install.packages("quantmod")
+library(quantmod)
+
+# calls data into workspace, prints ticker
+getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
+
+# inspect data
+head(LISN.SW)
+```
+
+:::
+
+<!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package -->
