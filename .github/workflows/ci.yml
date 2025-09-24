@@ -13,7 +13,7 @@ permissions:
 jobs:
   quarto:
     name: quarto_render
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup R
@@ -22,6 +22,7 @@ jobs:
         with:
           packages: |
             rmarkdown
+            quantmod
             tidyverse
             kofdata
           install-quarto: 'true'
