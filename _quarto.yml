@@ -10,7 +10,7 @@ project:
 website:
   page-navigation: true
   title: "Guest Lecture Slides 2025"
-  site-url: "https://minnaheim.github.io/dh_guest_lecture_2025/index.html"
+  site-url: "https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html"
   repo-url: https://github.com/minnaheim/dh_guest_lecture_2025
   repo-actions: [edit, issue]
 

@@ -24,7 +24,6 @@ devtools::install_github("KOF-ch/kofdata")
 
 ```{r, echo=FALSE,results='hide',fig.keep='all'}
 library(kofdata)
-library(stats)
 baro_vint <- get_collection("globalbaro_vintages")
 baro_20210 <- baro_vint$`globalbaro_leading_2020-10`
 
