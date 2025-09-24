@@ -1,0 +1,142 @@
+[
+  {
+    "objectID": "ablauf.html",
+    "href": "ablauf.html",
+    "title": "Guest Lecture Structure",
+    "section": "",
+    "text": "not more than 2-3 min\nyou’ve probably heard of APIs already\nteaser: this is what you could do with an API, and so much more \n\n\n\n\n\n\n\n\n\n\n\n\n\n\nused to take this lecture\nwork in the institute that produces the data i just showed you\n\n\n\n\n\ngain a better understanding of how APIs are used\nbuild your own mini wrapper\nmaybe understand in future when APIs are used, and recognize them in the wild.\n\n\n\n\n\n\n\nhow do we get data from the internet (let’s say you don’t have the .csv file on your computer) \nwe would go to the internet, get the data from the tabelle from the website (screenshot von einer website)\nhighlight the table we want, how do we get this data\nwhat if you want to do this more often? -&gt; umständlich!\n\n\n\n\n\n(we) write a computer program\nhow does it use the website & get the data into our programm\nlet’s look at a visual example\n\n\n\n\n\n\n\n\nAPIs\nEndpoint (PUT, POST, DELETE, GET)\nWrapper\n\nTo really cement this, as it is important for you to understand and differentiate, here are 2 ways to explain this: - analogy of an onion (conceptually) - openAPI (applied/visually) - if you want to see it in practice (see blogpost)\n\n\n\nthe magic of before works, because API wrapper (this wraps an API function call, makes it easier to execute for people who don’t want to read the API documentation or know how it works)\nbut we want to know how it works! \nAPI (Application Programming interface. (machine-to-machine))\nendpoint (urls where various requests should be sent)\nAPI wrapper\n\n\n\n\n\nLet’s pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.\n\n\nthis is what a REST API (visualisation) can look like: \n\n\n\n what do we want to see here? - exchange data using HTTP (internet protocol) - set of functions like GET, PUT, DELETE, etc. that clients can use to access server data. - endpoints\n\n\n\n\n\n\npet-by-id\n\n\nhighlight: - input id - responses (different types, different meanings) - data - API Keys\n\n\n\n\n\n\nautomation\neasier to fetch specific data (specify time, specific indicators)\nreal time data\nAPI usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)\n\n\n\nmultiple levels: (see more in blogs) - build your own API wrapper (w/ {httr2}) - use an API wrapper (w/ {kofdata})"
+  },
+  {
+    "objectID": "ablauf.html#terminology-of-rest-apis",
+    "href": "ablauf.html#terminology-of-rest-apis",
+    "title": "Guest Lecture Structure",
+    "section": "",
+    "text": "APIs\nEndpoint (PUT, POST, DELETE, GET)\nWrapper\n\nTo really cement this, as it is important for you to understand and differentiate, here are 2 ways to explain this: - analogy of an onion (conceptually) - openAPI (applied/visually) - if you want to see it in practice (see blogpost)\n\n\n\nthe magic of before works, because API wrapper (this wraps an API function call, makes it easier to execute for people who don’t want to read the API documentation or know how it works)\nbut we want to know how it works! \nAPI (Application Programming interface. (machine-to-machine))\nendpoint (urls where various requests should be sent)\nAPI wrapper\n\n\n\n\n\nLet’s pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.\n\n\nthis is what a REST API (visualisation) can look like: \n\n\n\n what do we want to see here? - exchange data using HTTP (internet protocol) - set of functions like GET, PUT, DELETE, etc. that clients can use to access server data. - endpoints\n\n\n\n\n\n\npet-by-id\n\n\nhighlight: - input id - responses (different types, different meanings) - data - API Keys"
+  },
+  {
+    "objectID": "ablauf.html#but-why-apis-for-us",
+    "href": "ablauf.html#but-why-apis-for-us",
+    "title": "Guest Lecture Structure",
+    "section": "",
+    "text": "automation\neasier to fetch specific data (specify time, specific indicators)\nreal time data\nAPI usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)\n\n\n\nmultiple levels: (see more in blogs) - build your own API wrapper (w/ {httr2}) - use an API wrapper (w/ {kofdata})"
+  },
+  {
+    "objectID": "presentation.html#monitoring-the-swiss-economy",
+    "href": "presentation.html#monitoring-the-swiss-economy",
+    "title": "Guest Lecture 2025",
+    "section": "Monitoring the Swiss Economy",
+    "text": "Monitoring the Swiss Economy"
+  },
+  {
+    "objectID": "presentation.html#about-me",
+    "href": "presentation.html#about-me",
+    "title": "Guest Lecture 2025",
+    "section": "About me",
+    "text": "About me\n\nI took this course 4 years ago!\nDoing a Master in Data Science & minor in Economics at UZH\nWorking at KOF-ETH"
+  },
+  {
+    "objectID": "presentation.html#about-the-institute-and-my-work",
+    "href": "presentation.html#about-the-institute-and-my-work",
+    "title": "Guest Lecture 2025",
+    "section": "About the institute and my work",
+    "text": "About the institute and my work\n\n\n  \n\n\nFrom surveys to innovation to forecasting\nSupporting researchers with research software (= R packages)\nTeaching doctoral students to work with data & co."
+  },
+  {
+    "objectID": "presentation.html#what-will-you-know-by-the-end-of-this-lecture",
+    "href": "presentation.html#what-will-you-know-by-the-end-of-this-lecture",
+    "title": "Guest Lecture 2025",
+    "section": "What will you know by the end of this Lecture?",
+    "text": "What will you know by the end of this Lecture?\n\ngain a better understanding of how APIs are used \n(maybe) build your own mini wrapper\nunderstand in future when APIs are used, and recognize them in the wild."
+  },
+  {
+    "objectID": "presentation.html#check-out-yahoo-data",
+    "href": "presentation.html#check-out-yahoo-data",
+    "title": "Guest Lecture 2025",
+    "section": "Check out Yahoo Data",
+    "text": "Check out Yahoo Data"
+  },
+  {
+    "objectID": "presentation.html#find-a-data-table",
+    "href": "presentation.html#find-a-data-table",
+    "title": "Guest Lecture 2025",
+    "section": "Find a Data Table",
+    "text": "Find a Data Table"
+  },
+  {
+    "objectID": "presentation.html#copy-data-into-ide",
+    "href": "presentation.html#copy-data-into-ide",
+    "title": "Guest Lecture 2025",
+    "section": "Copy data into IDE",
+    "text": "Copy data into IDE"
+  },
+  {
+    "objectID": "presentation.html#import-data",
+    "href": "presentation.html#import-data",
+    "title": "Guest Lecture 2025",
+    "section": "Import Data",
+    "text": "Import Data\n\nCodeData\n\n\nlibrary(readr)\nlibrary(utils)\n\n# Read all lines as a single column\n\nraw_data &lt;- readLines(\"lisn-sw.txt\")\n\n# The first 7 lines are headers\nheaders &lt;- raw_data[1:7]\n\ndata_lines &lt;- raw_data[-(1:7)]\n\n# set the column and row lengths\nn_cols &lt;- length(headers)\nn_rows &lt;- length(data_lines) / n_cols\n\n# Create matrix and convert to data frame\ndata_matrix &lt;- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)\ndata &lt;- as.data.frame(data_matrix)\ncolnames(data) &lt;- headers\n\nhead(data)\n\n\n\n\n\n           Date       Open       High        Low     Close  Adj Close  Volume\n1  Sep 24, 2025 120,800.00 121,600.00 120,600.00 121,000.00 121,000.00     11\n2  Sep 23, 2025 121,600.00 122,400.00 120,200.00 120,800.00 120,800.00     72\n3  Sep 22, 2025 123,000.00 123,200.00 121,200.00 121,200.00 121,200.00     83\n4  Sep 19, 2025 120,800.00 123,000.00 120,000.00 123,000.00 123,000.00    397\n5  Sep 18, 2025 120,800.00 122,400.00 120,800.00 121,800.00 121,800.00    104\n6  Sep 17, 2025 121,200.00 122,400.00 120,200.00 120,200.00 120,200.00     61\n7  Sep 16, 2025 124,000.00 124,000.00 121,200.00 121,200.00 121,200.00     67\n8  Sep 15, 2025 124,800.00 124,800.00 123,200.00 124,400.00 124,400.00     89\n9  Sep 12, 2025 125,000.00 125,800.00 124,200.00 124,800.00 124,800.00     55\n10 Sep 11, 2025 125,000.00 125,400.00 124,200.00 124,600.00 124,600.00     52\n11 Sep 10, 2025 125,200.00 126,000.00 124,000.00 124,600.00 124,600.00     90\n12  Sep 9, 2025 125,200.00 125,200.00 124,200.00 125,200.00 125,200.00     93"
+  },
+  {
+    "objectID": "presentation.html#using-an-unofficial-link",
+    "href": "presentation.html#using-an-unofficial-link",
+    "title": "Guest Lecture 2025",
+    "section": "1. Using an (unofficial) link",
+    "text": "1. Using an (unofficial) link\n\n\nlinkoutput\n\n\nWe can use the link:\nhttps://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1dyaho&events=history\n\nticker = LISN.SW\nperiod1 = 24.08.2025\nperiod2 = 24.09.2025\ninterval = 1 day\nevents = history (= historical prices)"
+  },
+  {
+    "objectID": "presentation.html#use-api-wrapper",
+    "href": "presentation.html#use-api-wrapper",
+    "title": "Guest Lecture 2025",
+    "section": "2. use API Wrapper",
+    "text": "2. use API Wrapper\n\ncodeoutput\n\n\n# install.packages(\"quantmod\")\nlibrary(quantmod)\n\n# calls data into workspace, prints ticker\ngetSymbols(\"LISN.SW\", src = \"yahoo\", from = \"2025-08-24\")\n\n# inspect data\nhead(LISN.SW)\n\n\n\n\n[1] \"LISN.SW\"\n\n\n           LISN.SW.Open LISN.SW.High LISN.SW.Low LISN.SW.Close LISN.SW.Volume\n2025-08-25       117200       119400      117200        117400             85\n2025-08-26       117000       119400      117000        118200            246\n2025-08-27       117400       119200      117400        118600             89\n2025-08-28       119200       119400      117600        119000            107\n2025-08-29       119000       119800      118200        119800             95\n2025-09-01       119400       120600      119400        120200             79\n           LISN.SW.Adjusted\n2025-08-25           117400\n2025-08-26           118200\n2025-08-27           118600\n2025-08-28           119000\n2025-08-29           119800\n2025-09-01           120200"
+  },
+  {
+    "objectID": "beispiele.html",
+    "href": "beispiele.html",
+    "title": "Set of API Examples",
+    "section": "",
+    "text": "Let’s pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.\n\n\nthis is what a REST API (visualisation) can look like: \n\n\n\n what do we want to see here? - exchange data using HTTP (internet protocol) - set of functions like GET, PUT, DELETE, etc. that clients can use to access server data. - endpoints\n\n\n\n\n\n\npet-by-id\n\n\n\ninput id\nresponses\ndata"
+  },
+  {
+    "objectID": "beispiele.html#pet-store-api-example",
+    "href": "beispiele.html#pet-store-api-example",
+    "title": "Set of API Examples",
+    "section": "",
+    "text": "Let’s pretend you want to keep track of what kind of pets are at your local pet store. Luckily, that local Pet store has their own server, and you can use an API to get important info you need.\n\n\nthis is what a REST API (visualisation) can look like: \n\n\n\n what do we want to see here? - exchange data using HTTP (internet protocol) - set of functions like GET, PUT, DELETE, etc. that clients can use to access server data. - endpoints\n\n\n\n\n\n\npet-by-id\n\n\n\ninput id\nresponses\ndata"
+  },
+  {
+    "objectID": "beispiele.html#country-population-api",
+    "href": "beispiele.html#country-population-api",
+    "title": "Set of API Examples",
+    "section": "Country Population API",
+    "text": "Country Population API\n\nget API key\n\nsign up yourself to try out the examples\n\n\n\nAPI playground\n\nsend requests via the API ninja interface \n\n\n\nDIY\n\nlibrary(httr2)\napi_key &lt;- \"6/wyfliT2QImYkxqgKJg9g==YUhj8uaK4XLWrioa\"\nbase_url &lt;- \"https://api.api-ninjas.com/v1/population?country=Japan\"\n\nreq &lt;- request(base_url)\n\nreq |&gt; req_dry_run()\n\nGET /v1/population?country=Japan HTTP/1.1\nHost: api.api-ninjas.com\nUser-Agent: httr2/1.0.1 r-curl/7.0.0 libcurl/8.14.1\nAccept: */*\nAccept-Encoding: deflate, gzip\n\n# highlight the following here: http method, path \n\nresp  &lt;- req |&gt; \n    req_headers(\"X-Api-Key\" = api_key) |&gt;\n    req_perform()\n\nresp\n\n&lt;httr2_response&gt;\n\n\nGET https://api.api-ninjas.com/v1/population?country=Japan\n\n\nStatus: 200 OK\n\n\nContent-Type: application/json\n\n\nBody: In memory (6834 bytes)\n\n\n\n\n\n\n\nPlumber - write your own API\n\n\n# plumber.R - can run API (with OpenAPI in RStudio)\nlibrary(plumber)\n\nWarning: package 'plumber' was built under R version 4.4.1\n\n#* Set Number of Observations \n#* @param n number of observations\n#* @post /observations\n\n#* Plot a histogram\n#* @serializer png\n#* @get /plot\nfunction(n = 100) {\n  rand &lt;- rnorm(n)\n  hist(rand)\n}\n\nfunction(n = 100) {\n  rand &lt;- rnorm(n)\n  hist(rand)\n}"
+  },
+  {
+    "objectID": "blog-api.html",
+    "href": "blog-api.html",
+    "title": "How do APIs work, conceptually?",
+    "section": "",
+    "text": "how do we get data from the internet (let’s say you don’t have the .csv file on your computer) \nwe would go to the internet, get the data from the tabelle from the website (screenshot von einer website)\nhighlight the table we want, how do we get this data\nwhat if you want to do this more often? -&gt; umständlich!\n\n\n\n\n\nhow does it use the website & get the data into our programm\n(we) write a computer program\nneeds to be standardized -&gt; protocol & documentation\n\n\nlist of methods to call from server (=functions) -&gt; CRUD\nparameters (keys, data, IDs, etc.) -&gt; url = query, path\nsend request with 1. & 2. contained.\nget response (code -&gt; what do the common ones mean? 2** vs. 4**) -&gt; do this later\nspecify how to handle return value of request (contains data)\n\n\n\n\n\n\n\n\n\n\nautomation\neasier to fetch specific data (specify time, specific indicators)\nreal time data\nAPI usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)"
+  },
+  {
+    "objectID": "blog-api.html#analogy-how-would-humans-do-it",
+    "href": "blog-api.html#analogy-how-would-humans-do-it",
+    "title": "How do APIs work, conceptually?",
+    "section": "",
+    "text": "how do we get data from the internet (let’s say you don’t have the .csv file on your computer) \nwe would go to the internet, get the data from the tabelle from the website (screenshot von einer website)\nhighlight the table we want, how do we get this data\nwhat if you want to do this more often? -&gt; umständlich!\n\n\n\n\n\nhow does it use the website & get the data into our programm\n(we) write a computer program\nneeds to be standardized -&gt; protocol & documentation\n\n\nlist of methods to call from server (=functions) -&gt; CRUD\nparameters (keys, data, IDs, etc.) -&gt; url = query, path\nsend request with 1. & 2. contained.\nget response (code -&gt; what do the common ones mean? 2** vs. 4**) -&gt; do this later\nspecify how to handle return value of request (contains data)\n\n\n\n\n\n\n\n\n\n\nautomation\neasier to fetch specific data (specify time, specific indicators)\nreal time data\nAPI usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)"
+  },
+  {
+    "objectID": "blog-api.html#terminology",
+    "href": "blog-api.html#terminology",
+    "title": "How do APIs work, conceptually?",
+    "section": "Terminology",
+    "text": "Terminology\n\nAPI = Application Programming interface. (machine-to-machine)\nAn API receives inbound requests and sends outbound responses. the client makes a HTTP request to the API server, the API defines and then waits for the server’s response.\nWas ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE.\nAnhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel.\nAPI Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen"
+  },
+  {
+    "objectID": "blog-api.html#diy---how-do-the-different-terminologies-look-in-code",
+    "href": "blog-api.html#diy---how-do-the-different-terminologies-look-in-code",
+    "title": "How do APIs work, conceptually?",
+    "section": "DIY - how do the different terminologies look in code",
+    "text": "DIY - how do the different terminologies look in code\n\n1. Create your own API\nusing {plumber} you can create your own Web API in R.\nLet’s say, we want to share a certain time series with the world, so we create an API - we define the\n\n\nLoading required package: jsonlite\n\n\nWarning: package 'jsonlite' was built under R version 4.4.1\n\n\nLoading required package: httr\n\n\nwrite the function that we will apply to create the API - aka how to filter a time series as to only get data in certain time frames.\n#* @param start date at which ts should start - can be years only, or c(year, month)\n#* @param end date at which ts should end - can be years only, or c(year, month)\n\npartition_ts &lt;- function(ts, start = NULL, end = NULL) {\n  if (inherits(ts, \"ts\")) {\n    # setting start and end date if unset\n    if (is.null(end)) {\n      end &lt;- time(ts)[length(ts)]\n    }\n    if (is.null(start)) {\n      start &lt;- time(ts)[1]\n    }\n    # filter ts based on start & end dates\n    ts &lt;- window(ts, start = start, end = end)\n  } else {\n    warning(\"Input is not a ts object\")\n    return(NULL)\n  }\n  return(ts)\n}\n# let's pretend the data comes from my own source\npartition_ts(data$kofbarometer, end = c(2010, 2))\ncreate the plumber api\n\nlibrary(plumber)\n#* return entire time series data\n#* @get /data\nfunction() {\n  # list(msg = paste0(\"does this work?\"))\n  partition_ts(data$kofbarometer)\n}\n\n\n#* return data w/ start and end dates.\n#* @param start the start year to filter by\n#* @param end the end year to filter by\n#* @get /filtered_data\n\nfunction(start = NULL, end = NULL) {\n  if (!is.null(start)) {\n    start &lt;- as.numeric(start)\n  }\n  if (!is.null(end)) {\n    end &lt;- as.numeric(end)\n  }\n\n  partition_ts(\n    data$kofbarometer,\n    start = start,\n    end = end\n  )\n}\n\n#* return the Plot the entire ts\n#* @serializer png\n#* @get /plotting\nfunction() {\n  plot(data$kofbarometer)\n}\n\n\n\n\n\n\nTip\n\n\n\nTo actually create your API, you can run the code snippets above in a file called plumber.R in the RStudio IDE, or run the following in your R console:\n# to set the port \n pr(\"plumber.R\") %&gt;%\n   pr_run(port=8000)\n\nplumb(file='plumber.R')$run()\n\n\nWhen running (=plumbing) this file, it looks like this:\n\n\n\nSwagger Documentation of our API\n\n\nLet’s try out the endpoint /filtered_data\n\n\n\nSetting Params for the Request\n\n\nWhen we execute this, what do we get?\n\n\n\nTime Series Data\n\n\nIMPORTANT IS: Swagger is just a documentation aid, it helps visualise the endpoints, and run requests. In real life, a request & response can look like this:\n\n\n\nReal Call\n\n\n\n\n2. Create your own Wrapper\nusing the {httr2 package} - Let’s say we know people only want to get the kofbarometer until 2019, since from 2020 onwards, the data is different, so we create an API wrapper, around the previously written /filtered_data endpoint to get only the data until 2019\n\n\n# install.packages(\"httr\")\nlibrary(httr)\nlibrary(jsonlite)\n\n\nkofbaro_until_2020 &lt;- function() {\n  #TODO: HIER MUSS ICH DAS NOCH VON DEM OBEN ERSTELLTEN API GETTEN, NICHT VON KOFDATA!\n  base_url &lt;- \"https://datenservice.kof.ethz.ch/api/v1/public/ts\"\n  query &lt;- list(\n    keys = ts_key,\n    df = \"Y-m-d\"\n  )\n\n  # if (!is.null(start)) query$start &lt;- start\n  # if (!is.null(end)) query$end &lt;- end\n\n  response &lt;- GET(base_url, query = query)\n\n  data &lt;- fromJSON(content(response, as = \"text\", encoding = \"UTF-8\"))\n\n  return(data)\n}\n\n\n\n3. With an existing API Wrapper\nusing {kofdata}\n\n# install the latest version\n# devtools::install_github(\"KOF-ch/kofdata\")\nlibrary(kofdata)\ndata &lt;- get_time_series(\"kofbarometer\", show_progress = TRUE)\n\n\nDownloading: 5.7 kB     \nDownloading: 5.7 kB     \nDownloading: 5.7 kB     \nDownloading: 5.7 kB     \n\nplot(data$kofbarometer)\n\n\n\n\n\n\n\n\nThe End."
+  }
+]

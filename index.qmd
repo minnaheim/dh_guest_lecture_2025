@@ -1,1 +1,0 @@
-<iframe class="slide-deck" src="presentation.html"></iframe>
