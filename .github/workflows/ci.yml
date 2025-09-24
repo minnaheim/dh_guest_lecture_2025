@@ -23,7 +23,6 @@ jobs:
           packages: |
             rmarkdown
             quantmod
-            tidyverse
             kofdata
           install-quarto: 'true'
       - name: Render Quarto Project
