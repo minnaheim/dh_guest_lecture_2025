@@ -1,50 +1,26 @@
 ---
-title: How do APIs work, conceptually?
+title: API Blog Post
 name: Minna
 date: today
 ---
 
-## Analogy, how would humans do it?
-
-#### Humanly, what would you do?
-
-- how do we get data from the internet (let's say you don't have the .csv file on your computer)
-<!-- TODO: use this for the blog post!!! -->
-- we would go to the internet, get the data from the tabelle from the website (screenshot von einer website)
-- highlight the table we want, how do we get this data
-- what if you want to do this more often? -> umständlich! 
-
-#### computer does it this way
-
-- how does it use the website & get the data into our programm
-- (we) write a computer program
-- needs to be standardized -> protocol & documentation
-
-1. list of methods to call from server (=functions) -> CRUD
-2. parameters (keys, data, IDs, etc.) -> url = query, path
-3. send request with 1. & 2. contained.
-4. get response (code -> what do the common ones mean? 2** vs. 4**) -> do this later
-5. specify how to handle return value of request (contains data)
-
-#### Example, visually
-
-<!-- chuck norris joke, or country population or something -->
-![](img/chuck-norris.png)
-
-#### What's the benefit of doing it this way?
-
-- automation
-- easier to fetch specific data (specify time, specific indicators)
-- real time data
-- API usage(often)so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
-
+This blog post aims to walk you through the different types of API usage (in R).
 
 ## Terminology 
-- API = Application Programming interface. (machine-to-machine) 
-- An API receives inbound requests and sends outbound responses. the client makes a HTTP request to the API server, the API defines  and then waits for the server's response. 
-- Was ist ein ENDPUNKT, eventuell Welche Verben gibt es bei REST: GET, POST, PUT, DELETE. 
+- **API** = Application Programming interface. (machine-to-machine) 
+- An API receives inbound requests and sends outbound responses. the client makes a HTTP request to the API server, the API defines and then waits for the server's response. 
+- **API Endpoint** the connecting point between API client and API server & handles the transfer of data between client & server.
+- REST **HTTP methods**: 
+    - GET
+    - POST
+    - PUT
+    - DELETE
+
+
+<!-- 
+matt comments
 - Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
-- API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen
+- API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen -->
 
 
 ## DIY - how do the different terminologies look in code
@@ -53,7 +29,7 @@ date: today
 
 using {plumber} you can create your own Web API in R. 
 
-Let's say, we want to share a certain time series with the world, so we create an API - we define the 
+Let's say, we want to share a certain time series with the world, so we create an API where users can `GET` the kof barometer in full, or starting at specific times, or ending at specific times. 
 
 ```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 # install the latest version
@@ -64,7 +40,8 @@ data <- get_time_series("kofbarometer", show_progress = TRUE)
 str(data$kofbarometer)
 ```
 
-write the function that we will apply to create the API - aka how to filter a time series as to only get data in certain time frames.
+For this, we first need to create a function `partition_ts` which takes the parameters the API users pass to the endpoint, i.e. a start and end date, and then partitions the time series according to those params. 
+
 ```r
 #* @param start date at which ts should start - can be years only, or c(year, month)
 #* @param end date at which ts should end - can be years only, or c(year, month)
@@ -90,7 +67,7 @@ partition_ts <- function(ts, start = NULL, end = NULL) {
 partition_ts(data$kofbarometer, end = c(2010, 2))
 ```
 
-create the plumber api
+Now, we use the above created function to create the function for users to get the data. We set the endpoint to `/data` so users can get the data from this location
 
 ```r
 
@@ -101,8 +78,10 @@ function() {
   # list(msg = paste0("does this work?"))
   partition_ts(data$kofbarometer)
 }
+```
+Next we create another function where users can `GET` data at the `/filtered_data` endpoint, where they can also specify the `start` and `end` dates, to not get the entire time series.
 
-
+```r
 #* return data w/ start and end dates.
 #* @param start the start year to filter by
 #* @param end the end year to filter by
@@ -122,7 +101,11 @@ function(start = NULL, end = NULL) {
     end = end
   )
 }
+```
 
+Finally, the last function can be used to get a png of the time series plotted, under the endpoint `/plotting`. 
+
+```r
 #* return the Plot the entire ts
 #* @serializer png
 #* @get /plotting
@@ -167,7 +150,10 @@ In real life, a request & response can look like this:
 
 using the {httr2 package} - Let's say we know people only want to get the kofbarometer until 2019, since from 2020 onwards, the data is different, so we create an API wrapper, around the previously written /filtered_data endpoint to get only the data until 2019
 
-<!-- TODO: figure out how to use the API just created to get only data until 2020. -->
+
+To use the API we just created ourselves, we need to ensure our custom API is being hosted -> but to do that we need to pay, either through digitalocean, or POSIT. 
+
+So, as an alternative, i will just use the kof API.
 
 ```{r}
 # install.packages("httr")
@@ -176,7 +162,6 @@ library(jsonlite)
 
 
 kofbaro_until_2020 <- function() {
-  #TODO: HIER MUSS ICH DAS NOCH VON DEM OBEN ERSTELLTEN API GETTEN, NICHT VON KOFDATA!
   base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
   query <- list(
     keys = ts_key,
