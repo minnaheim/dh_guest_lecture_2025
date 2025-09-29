@@ -4,32 +4,99 @@ name: Minna
 date: today
 ---
 
-This blog post aims to walk you through the different types of API usage (in R).
+## The Problem: Why Your Swiss Economic Analysis is Always Out of Date
 
-## Terminology 
-- **API** = Application Programming interface. (machine-to-machine) 
-- An API receives inbound requests and sends outbound responses. the client makes a HTTP request to the API server, the API defines and then waits for the server's response. 
-- **API Endpoint** the connecting point between API client and API server & handles the transfer of data between client & server.
-- REST **HTTP methods**: 
-    - GET
-    - POST
-    - PUT
-    - DELETE
+Imagine you're writing your bachelor thesis on Swiss economic forecasting. You want to analyze how well the **KOF Konjunkturbarometer** (a leading economic indicator that predicts Switzerland's near-future economic development) performs compared to actual economic outcomes. 
 
+Here's your nightmare scenario:
+- You manually download the latest KOF Barometer data from the website each month
+- You save it as "kof_data_march.xlsx", then "kof_data_april.xlsx", etc.
+- Three months later, you realize you've been using an outdated version from February
+- Your supervisor asks: "Can you quickly update this with the latest data?" 
+- You spend two hours re-downloading, re-formatting, and re-running your entire analysis
+- The KOF releases data revisions, and you have no idea which version you actually used
 
-<!-- 
-matt comments
-- Anhand der erklären lernen eine Swagger Doku zu verstehen. Am besten anhand von einem Economics API Beispiel. 
-- API Wrapper ist auch wichtig zu erklären, auch die Motivation so etwas zu machen -->
+Sound familiar? **This is exactly why APIs exist.**
 
+## The Solution: What if Data Could Update Itself?
 
-## DIY - how do the different terminologies look in code
+An **Application Programming Interface (API)** is like having a direct phone line to the KOF data warehouse. Instead of manually visiting their website, downloading files, and hoping they haven't changed the format, you can simply "call" their database and say: "Give me the latest Konjunkturbarometer data, formatted exactly how I need it."
 
-### 1. Create your own API
+Think of it like this:
+- **Manual download** = Going to the library, finding the right book, photocopying pages, hoping it's the latest edition
+- **API** = Having the librarian automatically deliver the newest pages to your desk whenever you ask
 
-using {plumber} you can create your own Web API in R. 
+This blog post will show you how APIs work in practice, why they're everywhere in economic data, and how to use them effectively for your own research.
 
-Let's say, we want to share a certain time series with the world, so we create an API where users can `GET` the kof barometer in full, or starting at specific times, or ending at specific times. 
+## APIs in the Wild: How Economists Actually Use Them
+
+Good news: you don't have to build everything from scratch! In 2025, most major economic data providers offer APIs, including the [St. Louis Federal Reserve](https://fred.stlouisfed.org/docs/api/fred/), the Swiss Federal Statistical Office (BFS), and yes—the KOF Swiss Economic Institute.
+
+Even better news: clever programmers have created **API wrapper libraries** that make using these APIs as simple as calling a function. Think of them as translators that speak "API language" so you don't have to.
+
+For Swiss economic data, you have ready-made tools like:
+- the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
+- the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
+- the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
+
+### Example: Getting KOF Barometer Data the Smart Way
+
+Remember our thesis scenario? Here's how you'd solve it using the `kofdata` R package, which connects directly to the [KOF API](https://datenservice.kof.ethz.ch/). Instead of manual downloads, you get live, up-to-date data with just a few lines of code: 
+
+```{r, warning=FALSE, message=FALSE}
+# install.packages("kofdata")
+library(kofdata)
+baro_vint <- get_collection("globalbaro_vintages")
+baro_2020_9 <- baro_vint$`globalbaro_leading_2020-09`
+baro_2025_9 <- baro_vint$`globalbaro_leading_2025-09`
+ts.plot(
+  baro_2020_9, baro_2025_9,
+  col = c("blue", "red"),
+  gpars = list(
+    xlab = "Year",
+    ylab = "Value",
+    main = "Global Barometer of 2020-09 & 2025-09"
+  )
+)
+```
+
+The benefits of using API are the following:
+- getting data that is up-to-date 
+- Consistent format (since there is a protocol) 
+- Reproducible research (anyone can run your code and get the same results (with access))
+- Easy comparisons (like comparing 2020 vs 2025 vintages above)
+
+Your thesis supervisor asks for updated results? Just re-run your code. The KOF releases revised data? Your analysis automatically uses the latest version. This is why experienced economists swear by APIs.
+
+But what if there's no ready-made wrapper for the data you need? Let's learn how APIs actually work under the hood, so you can build your own solutions.
+
+## Building Your Own API: Sharing KOF Data Like a Pro
+
+Now imagine you're working at KOF and want to share the Konjunkturbarometer data with researchers worldwide. How would you build an API like the one we just used? It's actually not rocket science!
+
+### Understanding API Basics: The HTTP Menu System
+
+Think of an API like a restaurant menu. When you make a request, you specify:
+- **What you want** (the endpoint, like `/data`)  
+- **How you want it** (the HTTP method)
+- **Any special instructions** (parameters like date ranges)
+
+The four main HTTP "verbs" are:
+- **GET** = "Give me data" (like downloading the KOF Barometer)
+- **POST** = "Store this new data" (like submitting a survey response)  
+- **PUT** = "Update existing data" (like revising a forecast)
+- **DELETE** = "Remove this data" (like deleting outdated entries)
+
+For economic data, you'll mostly use GET requests—we're usually retrieving and analyzing data, not modifying databases.
+
+### Example: Building a KOF Barometer API
+
+Let's create our own API that shares KOF Barometer data. We'll build endpoints where users can:
+- Get the complete time series: `/data`  
+- Get data from specific periods: `/data?start=2020&end=2024`
+- Even get a chart: `/plot`
+
+Here's how to do it with the `plumber` R package: 
 
 ```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 # install the latest version
@@ -67,26 +134,29 @@ partition_ts <- function(ts, start = NULL, end = NULL) {
 partition_ts(data$kofbarometer, end = c(2010, 2))
 ```
 
-Now, we use the above created function to create the function for users to get the data. We set the endpoint to `/data` so users can get the data from this location
+<!-- TODO: ask chat how to proceed with storytelling here -->
+Now comes the exciting part: building the actual API endpoints that researchers will use. Think of each endpoint as a different service your API restaurant offers.
+
+**The Basic Menu: Three Essential Endpoints**
+
+1. **The "Everything Please" endpoint** (`/data`) - gives users the complete time series:
 
 ```r
-
 library(plumber)
-#* return entire time series data
+#* Return entire KOF Barometer time series
 #* @get /data
 function() {
-  # list(msg = paste0("does this work?"))
   partition_ts(data$kofbarometer)
 }
 ```
-Next we create another function where users can `GET` data at the `/filtered_data` endpoint, where they can also specify the `start` and `end` dates, to not get the entire time series.
+
+2. **The "Custom Order" endpoint** (`/filtered_data`) - lets users specify date ranges:
 
 ```r
-#* return data w/ start and end dates.
+#* Return KOF Barometer data with custom date range
 #* @param start the start year to filter by
 #* @param end the end year to filter by
 #* @get /filtered_data
-
 function(start = NULL, end = NULL) {
   if (!is.null(start)) {
     start <- as.numeric(start)
@@ -103,94 +173,110 @@ function(start = NULL, end = NULL) {
 }
 ```
 
-Finally, the last function can be used to get a png of the time series plotted, under the endpoint `/plotting`. 
+3. **The "Visual Takeaway" endpoint** (`/plotting`) - returns ready-made charts: 
 
 ```r
-#* return the Plot the entire ts
+#* Return KOF Barometer chart as PNG
 #* @serializer png
 #* @get /plotting
 function() {
   plot(data$kofbarometer)
 }
-
 ```
 
 ::: {.callout-tip}
+## Testing Your API Locally
 
-To actually create your API, you can run the code snippets above in a file called plumber.R in the RStudio IDE, or run the following in your R console: 
+Save all three functions in a file called `plumber.R`, then launch your API:
 
 ```r
-# to set the port 
- pr("plumber.R") %>%
-   pr_run(port=8000)
-
-plumb(file='plumber.R')$run()
+# Launch your API on port 8000
+pr("plumber.R") %>%
+  pr_run(port=8000)
 ```
-
 :::
 
-When running (=plumbing) this file, it looks like this:
+**Your API in Action**
 
-![Swagger Documentation of our API](img/endpoints.png)
+When you run your API, you get an interactive documentation interface (called Swagger) that looks like this:
 
-Let's try out the endpoint `/filtered_data`
+![Your API endpoints ready for testing](img/endpoints.png)
 
-![Setting Params for the Request](img/set_params.png)
+Let's test the `/filtered_data` endpoint by requesting KOF Barometer data from 2015-2020:
 
-When we execute this, what do we get?
+![Setting parameters for your API request](img/set_params.png)
 
-![Time Series Data](img/get_requests.png)
+Hit "Execute" and voila—your API returns the exact data requested:
 
-IMPORTANT IS: Swagger is just a documentation aid, it helps visualise the endpoints, and run requests.
-In real life, a request & response can look like this:
+![Your API returning filtered economic data](img/get_requests.png)
 
-![Real Call](img/real_call.png)
+**What Just Happened?** 
 
-### 2. Create your own Wrapper
+Swagger is your API's user-friendly interface, but behind the scenes, researchers interact with your API through HTTP requests that look like this:
 
-using the {httr2 package} - Let's say we know people only want to get the kofbarometer until 2019, since from 2020 onwards, the data is different, so we create an API wrapper, around the previously written /filtered_data endpoint to get only the data until 2019
+![How real API calls work in practice](img/real_call.png)
 
+Congratulations! You've just built a professional-grade economic data API. But there's more to the story...
 
-To use the API we just created ourselves, we need to ensure our custom API is being hosted -> but to do that we need to pay, either through digitalocean, or POSIT. 
+## From API Builder to API User: The Full Circle
 
-So, as an alternative, i will just use the kof API.
+Now that you understand how APIs work from the inside, let's explore the three ways economists typically interact with economic data APIs in practice.
+
+### Method 1: Building Custom API Wrappers
+
+Sometimes you need very specific functionality that doesn't exist yet. For example, let's say you're studying the COVID-19 impact on Swiss economics and need KOF Barometer data **only up to 2019** (pre-pandemic baseline) for comparison studies.
+
+You could build a custom wrapper around the KOF API:
 
 ```{r}
-# install.packages("httr")
 library(httr)
 library(jsonlite)
 
-
-kofbaro_until_2020 <- function() {
+# Custom function for pre-COVID KOF data
+get_kof_pre_covid <- function() {
   base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
   query <- list(
-    keys = ts_key,
-    df = "Y-m-d"
+    keys = "ch.kof.barometer",
+    end = "2019-12-31" # Hard-coded cutoff for pre-COVID analysis
   )
 
-  # if (!is.null(start)) query$start <- start
-  # if (!is.null(end)) query$end <- end
-
   response <- GET(base_url, query = query)
-
   data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
 
   return(data)
 }
-
 ```
 
+**The Reality Check:** Building and hosting your own API costs money (DigitalOcean, AWS, etc.) and requires maintenance. For most research projects, this is overkill.
 
-### 3. With an existing API Wrapper 
+### Method 2: Using Existing API Wrappers (The Smart Choice)
 
-using {kofdata}
+This is where most economists land, and for good reason. Remember that `kofdata` package we used earlier? It's doing all the heavy lifting for you:
 
 ```{r}
-# install the latest version
-# devtools::install_github("KOF-ch/kofdata")
+# The magic happens in just two lines
 library(kofdata)
-data <- get_time_series("kofbarometer", show_progress = TRUE)
+data <- get_time_series("kofbarometer")
 plot(data$kofbarometer)
 ```
 
-The End.
+**Why This Matters for Your Research:**
+- **Reliability**: The KOF team maintains the wrapper, so it stays up-to-date
+- **Documentation**: Built-in help and examples
+- **Community**: Other economists use it, so you can get help
+- **Time-saving**: Focus on analysis, not data plumbing
+
+## The Bottom Line: APIs Are Your Research Superpower
+
+Whether you're using ready-made wrappers or building custom solutions, APIs transform how you work with economic data:
+
+**Before APIs:** Download → Save → Hope it's current → Manually update → Repeat  
+**With APIs:** Code once → Always current → Reproducible → Shareable
+
+Your future self (and your thesis supervisor) will thank you for learning this. In 2025, the economists who thrive are those who can seamlessly blend economic theory with data engineering skills.
+
+**Ready to get started?** Pick a dataset you're working with, find its API documentation, and try replacing your next manual download with an API call. Your research workflow will never be the same.
+
+---
+
+*Want to see more examples? Check out the KOF data service documentation at [datenservice.kof.ethz.ch](https://datenservice.kof.ethz.ch) or explore other Swiss economic APIs through the Federal Statistical Office.*
