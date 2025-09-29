@@ -3,3 +3,4 @@
 *.rmarkdown
 /.quarto/
 /_site
+.httr-oauth

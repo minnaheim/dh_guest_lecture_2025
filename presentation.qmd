@@ -1,11 +1,10 @@
 ---
 title: "Guest Lecture 2025"
-subtitle: "API Usage for Economic Data"
+subtitle: "Leverage APIs for Economic Data"
 format:
   revealjs:
     slide-number: true
     logo: img/rseed-pos.png
-    css: styles/logo.css
 ---
 
 ## Intro {visibility="hidden"}
@@ -19,24 +18,25 @@ devtools::install_github("KOF-ch/kofdata")
 - you've probably heard of APIs already
 - teaser: this is what you could do with an API (not the plotting, but getting data), and so much more  -->
 
-## Monitoring the Swiss Economy {.smaller}
-<!-- TODO: use lindt & sprüngli data -->
+## How do we get the data for this Plot?{.smaller}
 
 ```{r, echo=FALSE,results='hide',fig.keep='all'}
-library(kofdata)
-baro_vint <- get_collection("globalbaro_vintages")
-baro_20210 <- baro_vint$`globalbaro_leading_2020-10`
+# install.packages("quantmod")
+library(quantmod)
 
-plot_both <- stats::ts.plot(
-  baro_20210,
-  gpars = list(
-    xlab = "Year",
-    ylab = "Value",
-    main = "Global Barometer of 2020-10"
-  )
+# calls data into workspace, prints ticker
+getSymbols("LISN.SW", src = "yahoo", from = "2023-01-24")
+
+# inspect data
+head(LISN.SW)
+
+# TODO: plot difference between open and closing price (volatility measure)
+ts.plot(
+  LISN.SW$LISN.SW.Open,
+  gpars = list(xlab = "Time", ylab = "Open Price"),
+  main = "Lindt & Sprüngli Stock Price (Open)"
 )
 
-plot_both
 ```
 
 ## About me 
@@ -60,7 +60,7 @@ plot_both
 
 ::: {.column width="60%"}
 - From surveys to innovation to forecasting
-- Supporting researchers with research software (= R packages)
+- software, infrastructure and data publications with economic use cases.
 - Teaching doctoral students to work with data & co. 
 :::
 ::::
@@ -71,7 +71,7 @@ plot_both
 - (maybe) build your own mini wrapper
 - understand in future when APIs are used, and recognize them in the wild. 
 
-# Let's say, you're want to get some stock data 
+# Let's say, you want to get some stock data 
 <!-- TODO: put this into one slide, with subset? -->
 
 <!-- 
@@ -86,14 +86,13 @@ plot_both
 # "Human Way"
 
 ## Check out Yahoo Data
-<!-- TODO: center this -->
-![](/img/yahoo_lisn.png)
+![](/img/yahoo_lisn.png){fig-align="center"}
 
 ## Find a Data Table
-![](/img/lisn_table.png)
+![](/img/lisn_table.png){fig-align="center"}
 
 ## Copy data into IDE
-![](/img/imported_lisn.png)
+![](/img/imported_lisn.png){fig-align="center"}
 
 ## Import Data {.smaller}
 
@@ -103,14 +102,13 @@ plot_both
 ```r 
 library(readr)
 library(utils)
-
+library(lubridate)
 # Read all lines as a single column
-
 raw_data <- readLines("lisn-sw.txt")
 
 # The first 7 lines are headers
 headers <- raw_data[1:7]
-
+# the rest is the actual data
 data_lines <- raw_data[-(1:7)]
 
 # set the column and row lengths
@@ -122,14 +120,19 @@ data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
 data <- as.data.frame(data_matrix)
 colnames(data) <- headers
 
+# convert columns to correct formats
+data$Date <- mdy(data$Date)
+# remove commas and convert to numeric
+data[, -1] <- lapply(data[, -1], parse_number)
+
 head(data)
 ```
-<!-- and that's without the right formats! -->
 
 ### Data
 ```{r import data}
 library(readr)
 library(utils)
+library(lubridate)
 
 # Read all lines as a single column
 
@@ -150,6 +153,16 @@ data <- as.data.frame(data_matrix)
 colnames(data) <- headers
 
 
+# convert columns to correct formats
+data$Date <- mdy(data$Date)
+
+# cannot transform the other columns to numeric directly since the numbers are in the format: "123,456.78", aka the "," is not understood by functions like as.numeric().
+
+# remove commas and convert to numeric
+data[, -1] <- lapply(data[, -1], parse_number)
+# str(data)
+
+
 head(data, n = 12)
 ```
 
@@ -157,15 +170,67 @@ head(data, n = 12)
 
 # "API/programming way" (work in progress)
 
-<!-- 
-- (we) write a computer program (=R script)
-- follows the protocol
--->
 
-## 1. Using an (unofficial) link {.smaller}
-<!-- - no more yahoo finance API
-- closed down in 2017 -->
- 
+## 
+<!-- TODO: maybe design your own diagram based on stock example -->
+![](/img/api_diagram.webp){fig-align="center"}
+<!-- explain: GET POST PUT DELETE  -->
+
+## This is what API Documentation looks like (using API Ninja)
+- since yahoo finance API is down
+<!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things -->
+- we can use alternative (non-open source) APIs 
+- such as [API Ninja](https://api-ninjas.com/api/stock)
+- need to get an API key (free) to get current stock prices
+- need to pay to get historical stock prices
+
+## 
+![](/img/endpoint_desc_ninja.png){fig-align="center"}
+
+## 
+![](/img/sample_request_ninja_blurred.png){fig-align="center"}
+
+<!-- but this is just a representation. In real life, calling an API can look like this... -->
+# Typical Usage of an API 
+
+## 1. Using API Ninja (paying) {.smaller}
+::: {.panel-tabset}
+
+### cURL
+```bash
+curl -X GET "https://api.api-ninjas.com/v1/stockprice?ticker=LISN.SW" \
+  -H "X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."
+```
+
+### execute in terminal
+
+![](/img/terminal_call.png){fig-align="center"}
+
+### output
+```json
+{
+  "ticker": "LISN.SW",
+  "name": "Chocoladefabriken Lindt & Sprüngli AG",
+  "price": 119800,
+  "exchange": "SIX",
+  "updated": 1759137307,
+  "currency": "CHF"
+}
+```
+
+### cURL of historical prices
+```bash
+curl -X GET 
+"https://api.api-ninjas.com/v1/stockpricehistorical?ticker=LISN.SW&period=1d&start=1756052365&end=1758730765" \
+  -H "X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."
+```
+
+:::
+
+
+
+## 2. Using an (unofficial) link that is free{.smaller}
+
 ::: {.panel-tabset}
 
 ### link
@@ -188,10 +253,11 @@ We can use the link:
 ### output
 
 ![](/img/yahoo_fin_query.png)
+<!-- show this in person -->
 
 :::
 
-## 2. use API Wrapper {.smaller}
+## 3. use API Wrapper {.smaller}
 
 ::: {.panel-tabset}
 
@@ -220,6 +286,36 @@ getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
 head(LISN.SW)
 ```
 
+### charts
+```{r}
+# install.packages("quantmod")
+library(quantmod)
+
+# calls data into workspace, prints ticker
+getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
+
+# quantmod chart
+chartSeries(LISN.SW, theme = chartTheme("white"))
+```
+
 :::
+
+## Other examples of API wrappers for economic data
+
+- the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
+- the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
+- the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
+- the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
+
+## Why APIs?
+
+<!-- maybe by now, you have some ideas as to why API's are useful... -->
+
+- automation
+- easier to fetch specific data (specify time, specific indicators)
+- real time data
+- API usage (often) so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
+
+# Let's move on to the Exercises
 
 <!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package -->
