@@ -9,6 +9,7 @@ date: today
 Imagine you're writing your bachelor thesis on Swiss economic forecasting. You want to analyze how well the **KOF Konjunkturbarometer** (a leading economic indicator that predicts Switzerland's near-future economic development) performs compared to actual economic outcomes. 
 
 Here's your nightmare scenario:
+
 - You manually download the latest KOF Barometer data from the website each month
 - You save it as "kof_data_march.xlsx", then "kof_data_april.xlsx", etc.
 - Three months later, you realize you've been using an outdated version from February
@@ -23,6 +24,7 @@ Sound familiar? **This is exactly why APIs exist.**
 An **Application Programming Interface (API)** is like having a direct phone line to the KOF data warehouse. Instead of manually visiting their website, downloading files, and hoping they haven't changed the format, you can simply "call" their database and say: "Give me the latest Konjunkturbarometer data, formatted exactly how I need it."
 
 Think of it like this:
+
 - **Manual download** = Going to the library, finding the right book, photocopying pages, hoping it's the latest edition
 - **API** = Having the librarian automatically deliver the newest pages to your desk whenever you ask
 
@@ -61,6 +63,7 @@ ts.plot(
 ```
 
 The benefits of using API are the following:
+
 - getting data that is up-to-date 
 - Consistent format (since there is a protocol) 
 - Reproducible research (anyone can run your code and get the same results (with access))
