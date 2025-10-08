@@ -1,6 +1,8 @@
 ---
 title: "Guest Lecture 2025"
 subtitle: "Leverage APIs for Economic Data"
+author: "Minna Heim"
+# aurel: added the most important :-)
 format:
   revealjs:
     slide-number: true
@@ -65,11 +67,11 @@ ts.plot(
 :::
 ::::
 
-## What will you know by the end of this Lecture?
+## What will you know by the end of this lecture?
 - gain a better understanding of how APIs are used
 <!-- TODO: scope to be determined -->
-- (maybe) build your own mini wrapper
-- understand in future when APIs are used, and recognize them in the wild. 
+- build your own mini wrapper
+- learn to identify and understand the use of APIs in real-world contexts 
 
 # Let's say, you want to get some stock data 
 <!-- TODO: put this into one slide, with subset? -->
@@ -86,13 +88,13 @@ ts.plot(
 # "Human Way"
 
 ## Check out Yahoo Data
-![](/img/yahoo_lisn.png){fig-align="center"}
+![](img/yahoo_lisn.png){fig-align="center"}
 
 ## Find a Data Table
-![](/img/lisn_table.png){fig-align="center"}
+![](img/lisn_table.png){fig-align="center"}
 
 ## Copy data into IDE
-![](/img/imported_lisn.png){fig-align="center"}
+![](img/imported_lisn.png){fig-align="center"}
 
 ## Import Data {.smaller}
 
@@ -101,7 +103,6 @@ ts.plot(
 ### Code 
 ```r 
 library(readr)
-library(utils)
 library(lubridate)
 # Read all lines as a single column
 raw_data <- readLines("lisn-sw.txt")
@@ -120,7 +121,7 @@ data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
 data <- as.data.frame(data_matrix)
 colnames(data) <- headers
 
-# convert columns to correct formats
+# convert columns to correct formats using lubridate
 data$Date <- mdy(data$Date)
 # remove commas and convert to numeric
 data[, -1] <- lapply(data[, -1], parse_number)
@@ -131,7 +132,6 @@ head(data)
 ### Data
 ```{r import data}
 library(readr)
-library(utils)
 library(lubridate)
 
 # Read all lines as a single column
@@ -179,16 +179,17 @@ head(data, n = 12)
 ## This is what API Documentation looks like (using API Ninja)
 - since yahoo finance API is down
 <!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things -->
+<!-- by googling, and trying out which API services, such as Ninja API offer, and if it's free or not, you find out what works best for your needs -->
 - we can use alternative (non-open source) APIs 
-- such as [API Ninja](https://api-ninjas.com/api/stock)
+- such as [API Ninja](https://api-ninjas.com/api/stockprice) 
 - need to get an API key (free) to get current stock prices
 - need to pay to get historical stock prices
 
 ## 
-![](/img/endpoint_desc_ninja.png){fig-align="center"}
+![](img/endpoint_desc_ninja.png){fig-align="center"}
 
 ## 
-![](/img/sample_request_ninja_blurred.png){fig-align="center"}
+![](img/sample_request_ninja_blurred.png){fig-align="center"}
 
 <!-- but this is just a representation. In real life, calling an API can look like this... -->
 # Typical Usage of an API 
@@ -204,7 +205,7 @@ curl -X GET "https://api.api-ninjas.com/v1/stockprice?ticker=LISN.SW" \
 
 ### execute in terminal
 
-![](/img/terminal_call.png){fig-align="center"}
+![](img/terminal_call.png){fig-align="center"}
 
 ### output
 ```json
@@ -231,6 +232,7 @@ curl -X GET
 
 ## 2. Using an (unofficial) link that is free{.smaller}
 
+<!-- TODO: One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->
 ::: {.panel-tabset}
 
 ### link
@@ -252,12 +254,12 @@ We can use the link:
 
 ### output
 
-![](/img/yahoo_fin_query.png)
+![](img/yahoo_fin_query.png)
 <!-- show this in person -->
 
 :::
 
-## 3. use API Wrapper {.smaller}
+## 3. Using an API Wrapper {.smaller}
 
 ::: {.panel-tabset}
 
@@ -307,6 +309,9 @@ chartSeries(LISN.SW, theme = chartTheme("white"))
 - the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
 - the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
 
+
+# Why APIs?
+
 ## Why APIs?
 
 <!-- maybe by now, you have some ideas as to why API's are useful... -->
@@ -316,6 +321,16 @@ chartSeries(LISN.SW, theme = chartTheme("white"))
 - real time data
 - API usage (often) so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
 
-# Let's move on to the Exercises
+# Let's move on to the exercises
 
+
+## Thank you for your attention! 
+If you are interested in working with us or if you have any questions: 
+
+- source code: [https://github.com/minnaheim/dh_guest_lecture_2025](https://github.com/minnaheim/dh_guest_lecture_2025)
+- slides: [https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/](https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html)
+- find us at [rseed.ch](https://rseed.ch)
+- contact me: [heim@kof.ethz.ch](mailto:heim@kof.ethz.ch)
 <!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package -->
+
+
