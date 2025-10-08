@@ -10,6 +10,7 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.45">
 
+  <meta name="author" content="Minna Heim">
   <title>Guest Lecture Slides 2025 – Guest Lecture 2025</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -95,7 +96,6 @@
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css">
-  <link rel="stylesheet" href="styles/logo.css">
   <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -392,16 +392,20 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Guest Lecture 2025</h1>
-  <p class="subtitle">API Usage for Economic Data</p>
+  <p class="subtitle">Leverage APIs for Economic Data</p>
 
 <div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Minna Heim 
+</div>
+</div>
 </div>
 
 </section>
 
-<section id="monitoring-the-swiss-economy" class="slide level2 smaller">
-<h2>Monitoring the Swiss Economy</h2>
-<!-- TODO: use lindt & sprüngli data -->
+<section id="how-do-we-get-the-data-for-this-plot" class="slide level2 smaller">
+<h2>How do we get the data for this Plot?</h2>
 
 <img data-src="presentation_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"></section>
 <section id="about-me" class="slide level2">
@@ -422,22 +426,22 @@
 </div><div class="column" style="width:60%;">
 <ul>
 <li>From surveys to innovation to forecasting</li>
-<li>Supporting researchers with research software (= R packages)</li>
+<li>software, infrastructure and data publications with economic use cases.</li>
 <li>Teaching doctoral students to work with data &amp; co.</li>
 </ul>
 </div>
 </div>
 </section>
 <section id="what-will-you-know-by-the-end-of-this-lecture" class="slide level2">
-<h2>What will you know by the end of this Lecture?</h2>
+<h2>What will you know by the end of this lecture?</h2>
 <ul>
 <li>gain a better understanding of how APIs are used <!-- TODO: scope to be determined --></li>
-<li>(maybe) build your own mini wrapper</li>
-<li>understand in future when APIs are used, and recognize them in the wild.</li>
+<li>build your own mini wrapper</li>
+<li>learn to identify and understand the use of APIs in real-world contexts</li>
 </ul>
 </section>
-<section id="lets-say-youre-want-to-get-some-stock-data" class="title-slide slide level1 center">
-<h1>Let’s say, you’re want to get some stock data</h1>
+<section id="lets-say-you-want-to-get-some-stock-data" class="title-slide slide level1 center">
+<h1>Let’s say, you want to get some stock data</h1>
 <!-- TODO: put this into one slide, with subset? -->
 <!-- 
 - let's say we want to get the stock prices of lindt & sprüngli for the last month
@@ -457,17 +461,16 @@
 </section>
 <section id="check-out-yahoo-data" class="slide level2">
 <h2>Check out Yahoo Data</h2>
-<!-- TODO: center this -->
 
-<img data-src="./img/yahoo_lisn.png" class="r-stretch"></section>
+<img data-src="img/yahoo_lisn.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="find-a-data-table" class="slide level2">
 <h2>Find a Data Table</h2>
 
-<img data-src="./img/lisn_table.png" class="r-stretch"></section>
+<img data-src="img/lisn_table.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="copy-data-into-ide" class="slide level2">
 <h2>Copy data into IDE</h2>
 
-<img data-src="./img/imported_lisn.png" class="r-stretch"></section>
+<img data-src="img/imported_lisn.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="import-data" class="slide level2 smaller">
 <h2>Import Data</h2>
 <div class="panel-tabset">
@@ -475,45 +478,47 @@
 <div class="tab-content">
 <div id="tabset-1-1">
 <div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(readr)</span>
-<span id="cb1-2"><a></a><span class="fu">library</span>(utils)</span>
-<span id="cb1-3"><a></a></span>
-<span id="cb1-4"><a></a><span class="co"># Read all lines as a single column</span></span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-3"><a></a><span class="co"># Read all lines as a single column</span></span>
+<span id="cb1-4"><a></a>raw_data <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"lisn-sw.txt"</span>)</span>
 <span id="cb1-5"><a></a></span>
-<span id="cb1-6"><a></a>raw_data <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"lisn-sw.txt"</span>)</span>
-<span id="cb1-7"><a></a></span>
-<span id="cb1-8"><a></a><span class="co"># The first 7 lines are headers</span></span>
-<span id="cb1-9"><a></a>headers <span class="ot">&lt;-</span> raw_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>]</span>
+<span id="cb1-6"><a></a><span class="co"># The first 7 lines are headers</span></span>
+<span id="cb1-7"><a></a>headers <span class="ot">&lt;-</span> raw_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>]</span>
+<span id="cb1-8"><a></a><span class="co"># the rest is the actual data</span></span>
+<span id="cb1-9"><a></a>data_lines <span class="ot">&lt;-</span> raw_data[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)]</span>
 <span id="cb1-10"><a></a></span>
-<span id="cb1-11"><a></a>data_lines <span class="ot">&lt;-</span> raw_data[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)]</span>
-<span id="cb1-12"><a></a></span>
-<span id="cb1-13"><a></a><span class="co"># set the column and row lengths</span></span>
-<span id="cb1-14"><a></a>n_cols <span class="ot">&lt;-</span> <span class="fu">length</span>(headers)</span>
-<span id="cb1-15"><a></a>n_rows <span class="ot">&lt;-</span> <span class="fu">length</span>(data_lines) <span class="sc">/</span> n_cols</span>
-<span id="cb1-16"><a></a></span>
-<span id="cb1-17"><a></a><span class="co"># Create matrix and convert to data frame</span></span>
-<span id="cb1-18"><a></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data_lines, <span class="at">nrow =</span> n_rows, <span class="at">ncol =</span> n_cols, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-19"><a></a>data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data_matrix)</span>
-<span id="cb1-20"><a></a><span class="fu">colnames</span>(data) <span class="ot">&lt;-</span> headers</span>
-<span id="cb1-21"><a></a></span>
-<span id="cb1-22"><a></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<!-- and that's without the right formats! -->
+<span id="cb1-11"><a></a><span class="co"># set the column and row lengths</span></span>
+<span id="cb1-12"><a></a>n_cols <span class="ot">&lt;-</span> <span class="fu">length</span>(headers)</span>
+<span id="cb1-13"><a></a>n_rows <span class="ot">&lt;-</span> <span class="fu">length</span>(data_lines) <span class="sc">/</span> n_cols</span>
+<span id="cb1-14"><a></a></span>
+<span id="cb1-15"><a></a><span class="co"># Create matrix and convert to data frame</span></span>
+<span id="cb1-16"><a></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data_lines, <span class="at">nrow =</span> n_rows, <span class="at">ncol =</span> n_cols, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-17"><a></a>data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data_matrix)</span>
+<span id="cb1-18"><a></a><span class="fu">colnames</span>(data) <span class="ot">&lt;-</span> headers</span>
+<span id="cb1-19"><a></a></span>
+<span id="cb1-20"><a></a><span class="co"># convert columns to correct formats using lubridate</span></span>
+<span id="cb1-21"><a></a>data<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">mdy</span>(data<span class="sc">$</span>Date)</span>
+<span id="cb1-22"><a></a><span class="co"># remove commas and convert to numeric</span></span>
+<span id="cb1-23"><a></a>data[, <span class="sc">-</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data[, <span class="sc">-</span><span class="dv">1</span>], parse_number)</span>
+<span id="cb1-24"><a></a></span>
+<span id="cb1-25"><a></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-1-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>           Date       Open       High        Low     Close  Adj Close  Volume
-1  Sep 24, 2025 120,800.00 121,600.00 120,600.00 121,000.00 121,000.00     11
-2  Sep 23, 2025 121,600.00 122,400.00 120,200.00 120,800.00 120,800.00     72
-3  Sep 22, 2025 123,000.00 123,200.00 121,200.00 121,200.00 121,200.00     83
-4  Sep 19, 2025 120,800.00 123,000.00 120,000.00 123,000.00 123,000.00    397
-5  Sep 18, 2025 120,800.00 122,400.00 120,800.00 121,800.00 121,800.00    104
-6  Sep 17, 2025 121,200.00 122,400.00 120,200.00 120,200.00 120,200.00     61
-7  Sep 16, 2025 124,000.00 124,000.00 121,200.00 121,200.00 121,200.00     67
-8  Sep 15, 2025 124,800.00 124,800.00 123,200.00 124,400.00 124,400.00     89
-9  Sep 12, 2025 125,000.00 125,800.00 124,200.00 124,800.00 124,800.00     55
-10 Sep 11, 2025 125,000.00 125,400.00 124,200.00 124,600.00 124,600.00     52
-11 Sep 10, 2025 125,200.00 126,000.00 124,000.00 124,600.00 124,600.00     90
-12  Sep 9, 2025 125,200.00 125,200.00 124,200.00 125,200.00 125,200.00     93</code></pre>
+<pre><code>         Date   Open   High    Low Close  Adj Close  Volume
+1  2025-09-24 120800 121600 120600 121000     121000     11
+2  2025-09-23 121600 122400 120200 120800     120800     72
+3  2025-09-22 123000 123200 121200 121200     121200     83
+4  2025-09-19 120800 123000 120000 123000     123000    397
+5  2025-09-18 120800 122400 120800 121800     121800    104
+6  2025-09-17 121200 122400 120200 120200     120200     61
+7  2025-09-16 124000 124000 121200 121200     121200     67
+8  2025-09-15 124800 124800 123200 124400     124400     89
+9  2025-09-12 125000 125800 124200 124800     124800     55
+10 2025-09-11 125000 125400 124200 124600     124600     52
+11 2025-09-10 125200 126000 124000 124600     124600     90
+12 2025-09-09 125200 125200 124200 125200     125200     93</code></pre>
 </div>
 </div>
 </div>
@@ -523,19 +528,78 @@
 <section>
 <section id="apiprogramming-way-work-in-progress" class="title-slide slide level1 center">
 <h1>“API/programming way” (work in progress)</h1>
-<!-- 
-- (we) write a computer program (=R script)
-- follows the protocol
--->
+
 </section>
-<section id="using-an-unofficial-link" class="slide level2 smaller">
-<h2>1. Using an (unofficial) link</h2>
-<!-- - no more yahoo finance API
-- closed down in 2017 -->
+<section id="section" class="slide level2">
+<h2></h2>
+<!-- TODO: maybe design your own diagram based on stock example -->
+<p><img data-src="./img/api_diagram.webp" class="quarto-figure quarto-figure-center"> <!-- explain: GET POST PUT DELETE  --></p>
+</section>
+<section id="this-is-what-api-documentation-looks-like-using-api-ninja" class="slide level2">
+<h2>This is what API Documentation looks like (using API Ninja)</h2>
+<ul>
+<li>since yahoo finance API is down <!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things --> <!-- by googling, and trying out which API services, such as Ninja API offer, and if it's free or not, you find out what works best for your needs --></li>
+<li>we can use alternative (non-open source) APIs</li>
+<li>such as <a href="https://api-ninjas.com/api/stockprice">API Ninja</a></li>
+<li>need to get an API key (free) to get current stock prices</li>
+<li>need to pay to get historical stock prices</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+
+<img data-src="img/endpoint_desc_ninja.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+
+<!-- but this is just a representation. In real life, calling an API can look like this... -->
+<img data-src="img/sample_request_ninja_blurred.png" class="quarto-figure quarto-figure-center r-stretch"></section></section>
+<section>
+<section id="typical-usage-of-an-api" class="title-slide slide level1 center">
+<h1>Typical Usage of an API</h1>
+
+</section>
+<section id="using-api-ninja-paying" class="slide level2 smaller">
+<h2>1. Using API Ninja (paying)</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">link</a></li><li><a href="#tabset-2-2">output</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">cURL</a></li><li><a href="#tabset-2-2">execute in terminal</a></li><li><a href="#tabset-2-3">output</a></li><li><a href="#tabset-2-4">cURL of historical prices</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">curl</span> <span class="at">-X</span> GET <span class="st">"https://api.api-ninjas.com/v1/stockprice?ticker=LISN.SW"</span> <span class="dt">\</span></span>
+<span id="cb3-2"><a></a>  <span class="at">-H</span> <span class="st">"X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-2-2">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/terminal_call.png" class="quarto-figure quarto-figure-center"></p>
+</figure>
+</div>
+</div>
+<div id="tabset-2-3">
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource json number-lines code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a></a><span class="fu">{</span></span>
+<span id="cb4-2"><a></a>  <span class="dt">"ticker"</span><span class="fu">:</span> <span class="st">"LISN.SW"</span><span class="fu">,</span></span>
+<span id="cb4-3"><a></a>  <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Chocoladefabriken Lindt &amp; Sprüngli AG"</span><span class="fu">,</span></span>
+<span id="cb4-4"><a></a>  <span class="dt">"price"</span><span class="fu">:</span> <span class="dv">119800</span><span class="fu">,</span></span>
+<span id="cb4-5"><a></a>  <span class="dt">"exchange"</span><span class="fu">:</span> <span class="st">"SIX"</span><span class="fu">,</span></span>
+<span id="cb4-6"><a></a>  <span class="dt">"updated"</span><span class="fu">:</span> <span class="dv">1759137307</span><span class="fu">,</span></span>
+<span id="cb4-7"><a></a>  <span class="dt">"currency"</span><span class="fu">:</span> <span class="st">"CHF"</span></span>
+<span id="cb4-8"><a></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-2-4">
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">curl</span> <span class="at">-X</span> GET </span>
+<span id="cb5-2"><a></a><span class="st">"https://api.api-ninjas.com/v1/stockpricehistorical?ticker=LISN.SW&amp;period=1d&amp;start=1756052365&amp;end=1758730765"</span> <span class="dt">\</span></span>
+<span id="cb5-3"><a></a>  <span class="at">-H</span> <span class="st">"X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="using-an-unofficial-link-that-is-free" class="slide level2 smaller">
+<h2>2. Using an (unofficial) link that is free</h2>
+<!-- TODO: One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">link</a></li><li><a href="#tabset-3-2">output</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
 <p>We can use the link:</p>
 <p><code>https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&amp;period2=1758730765&amp;interval=1dyaho&amp;events=history</code></p>
 <ul>
@@ -550,28 +614,28 @@
  period1 = 1756052365 (24.08.2025)
  period2 = 1758730765 (24.09.2025) -->
 </div>
-<div id="tabset-2-2">
-<p><img data-src="./img/yahoo_fin_query.png"></p>
+<div id="tabset-3-2">
+<p><img data-src="img/yahoo_fin_query.png"> <!-- show this in person --></p>
 </div>
 </div>
 </div>
 </section>
-<section id="use-api-wrapper" class="slide level2 smaller">
-<h2>2. use API Wrapper</h2>
+<section id="using-an-api-wrapper" class="slide level2 smaller">
+<h2>3. Using an API Wrapper</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">code</a></li><li><a href="#tabset-3-2">output</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">code</a></li><li><a href="#tabset-4-2">output</a></li><li><a href="#tabset-4-3">charts</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1">
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># install.packages("quantmod")</span></span>
-<span id="cb3-2"><a></a><span class="fu">library</span>(quantmod)</span>
-<span id="cb3-3"><a></a></span>
-<span id="cb3-4"><a></a><span class="co"># calls data into workspace, prints ticker</span></span>
-<span id="cb3-5"><a></a><span class="fu">getSymbols</span>(<span class="st">"LISN.SW"</span>, <span class="at">src =</span> <span class="st">"yahoo"</span>, <span class="at">from =</span> <span class="st">"2025-08-24"</span>)</span>
-<span id="cb3-6"><a></a></span>
-<span id="cb3-7"><a></a><span class="co"># inspect data</span></span>
-<span id="cb3-8"><a></a><span class="fu">head</span>(LISN.SW)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="tabset-4-1">
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># install.packages("quantmod")</span></span>
+<span id="cb6-2"><a></a><span class="fu">library</span>(quantmod)</span>
+<span id="cb6-3"><a></a></span>
+<span id="cb6-4"><a></a><span class="co"># calls data into workspace, prints ticker</span></span>
+<span id="cb6-5"><a></a><span class="fu">getSymbols</span>(<span class="st">"LISN.SW"</span>, <span class="at">src =</span> <span class="st">"yahoo"</span>, <span class="at">from =</span> <span class="st">"2025-08-24"</span>)</span>
+<span id="cb6-6"><a></a></span>
+<span id="cb6-7"><a></a><span class="co"># inspect data</span></span>
+<span id="cb6-8"><a></a><span class="fu">head</span>(LISN.SW)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="tabset-3-2">
+<div id="tabset-4-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "LISN.SW"</code></pre>
@@ -594,9 +658,61 @@
 </div>
 </div>
 </div>
+<div id="tabset-4-3">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "LISN.SW"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="presentation_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+</figure>
 </div>
 </div>
-<!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package -->
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="other-examples-of-api-wrappers-for-economic-data" class="slide level2">
+<h2>Other examples of API wrappers for economic data</h2>
+<ul>
+<li>the <a href="https://www.rdocumentation.org/packages/kofdata/versions/0.2.1">kofdata</a> R Package (for KOF data)</li>
+<li>the <a href="https://felixluginbuhl.com/BFS/">BFS</a> R package (for Swiss federal statistics)</li>
+<li>the <a href="https://pypi.org/project/fredapi/">fredapi</a> Python Library (for US economic data)</li>
+<li>the <a href="https://sboysel.github.io/fredr/">fredr</a> data from the Federal Reserve Economic Data (FRED) API R package</li>
+</ul>
+</section></section>
+<section>
+<section id="why-apis" class="title-slide slide level1 center">
+<h1>Why APIs?</h1>
+
+</section>
+<section id="why-apis-1" class="slide level2">
+<h2>Why APIs?</h2>
+<!-- maybe by now, you have some ideas as to why API's are useful... -->
+<ul>
+<li>automation</li>
+<li>easier to fetch specific data (specify time, specific indicators)</li>
+<li>real time data</li>
+<li>API usage (often) so much easier than scraping &amp; downloading &amp; reading &amp; cleaning!! (all-in-1)</li>
+</ul>
+</section></section>
+<section>
+<section id="lets-move-on-to-the-exercises" class="title-slide slide level1 center">
+<h1>Let’s move on to the exercises</h1>
+
+</section>
+<section id="thank-you-for-your-attention" class="slide level2">
+<h2>Thank you for your attention!</h2>
+<p>If you are interested in working with us or if you have any questions:</p>
+<ul>
+<li>source code: <a href="https://github.com/minnaheim/dh_guest_lecture_2025">https://github.com/minnaheim/dh_guest_lecture_2025</a></li>
+<li>slides: <a href="https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html">https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/</a></li>
+<li>find us at <a href="https://rseed.ch">rseed.ch</a></li>
+<li>contact me: <a href="mailto:heim@kof.ethz.ch">heim@kof.ethz.ch</a> <!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package --></li>
+</ul>
 
 <div class="quarto-auto-generated-content">
 <p><img src="img/rseed-pos.png" class="slide-logo"></p>
