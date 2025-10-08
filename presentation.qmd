@@ -136,7 +136,7 @@ library(lubridate)
 
 # Read all lines as a single column
 
-raw_data <- readLines("yahoo_finance_example/lisn-sw.txt")
+raw_data <- readLines("examples/lisn-sw.txt")
 
 # The first 7 lines are headers
 headers <- raw_data[1:7]
