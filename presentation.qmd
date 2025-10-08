@@ -70,9 +70,8 @@ ts.plot(
 ## What will you know by the end of this lecture?
 - gain a better understanding of how APIs are used
 <!-- TODO: scope to be determined -->
-- (maybe) build your own mini wrapper
-<!-- aurel: Suggestion: learn to identify and understand the use of APIs in real-world contexts -->
-- understand in future when APIs are used, and recognize them in the wild. 
+- build your own mini wrapper
+- learn to identify and understand the use of APIs in real-world contexts 
 
 # Let's say, you want to get some stock data 
 <!-- TODO: put this into one slide, with subset? -->
@@ -99,7 +98,6 @@ ts.plot(
 
 ## Import Data {.smaller}
 
-<!-- aurel: I removed the command library(utils), as it is loaded by default and might confuse students. The rest is perfect!! -->
 ::: {.panel-tabset}
 
 ### Code 
@@ -181,9 +179,9 @@ head(data, n = 12)
 ## This is what API Documentation looks like (using API Ninja)
 - since yahoo finance API is down
 <!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things -->
+<!-- by googling, and trying out which API services, such as Ninja API offer, and if it's free or not, you find out what works best for your needs -->
 - we can use alternative (non-open source) APIs 
-- such as [API Ninja](https://api-ninjas.com/api/stock) 
-<!-- aurel: the link is down. this works: https://api-ninjas.com/api/stockprice -->
+- such as [API Ninja](https://api-ninjas.com/api/stockprice) 
 - need to get an API key (free) to get current stock prices
 - need to pay to get historical stock prices
 
@@ -234,6 +232,7 @@ curl -X GET
 
 ## 2. Using an (unofficial) link that is free{.smaller}
 
+<!-- TODO: One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->
 ::: {.panel-tabset}
 
 ### link
@@ -324,12 +323,14 @@ chartSeries(LISN.SW, theme = chartTheme("white"))
 
 # Let's move on to the exercises
 
+
+## Thank you for your attention! 
+If you are interested in working with us or if you have any questions: 
+
+- source code: [https://github.com/minnaheim/dh_guest_lecture_2025](https://github.com/minnaheim/dh_guest_lecture_2025)
+- slides: [https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/](https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html)
+- find us at [rseed.ch](https://rseed.ch)
+- contact me: [heim@kof.ethz.ch](mailto:heim@kof.ethz.ch)
 <!-- we could use the yfinance API (private) or the {yfR} or the {quantmod} package -->
 
 
-
-<!-- aurel: This is great! It is well illustrated, captivating for students, great examples, the story ark is also well structured. I am looking forward to it.  -->
-
-<!-- In terms of timing, it should be perfect for the first hour.  -->
-
-<!-- One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->

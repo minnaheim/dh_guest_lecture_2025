@@ -1,6 +1,6 @@
 ---
 title: API Blog Post
-name: Minna
+author: "Minna Heim"
 date: today
 ---
 
@@ -12,17 +12,17 @@ Here's your nightmare scenario:
 
 - You manually download the latest KOF Barometer data from the website each month
 - You save it as "kof_data_march.xlsx", then "kof_data_april.xlsx", etc.
-- Three months later, you realize you've been using an outdated version from February 
-<!-- aurel: since February? -->
+- Three months later, you realize you've been using an outdated version from March 
 - Your supervisor asks: "Can you quickly update this with the latest data?" 
 - You spend two hours re-downloading, re-formatting, and re-running your entire analysis
 - The KOF releases data revisions, and you have no idea which version you actually used
+<!-- i.e. highlight the problem that when you manually download data, you always only get the data from that time, if data is later revised, you won't realise it - for forecast evaluation this is good, but in other cases, not so much. -->
 
 Sounds familiar? **This is exactly why APIs exist.**
 
 ## The Solution: What if Data Could Update Itself?
 
-An **Application Programming Interface (API)** is like having a direct phone line to the KOF data warehouse. Instead of manually visiting their website, downloading files, and hoping they haven't changed the format, you can simply "call" their database and say: "Give me the latest Konjunkturbarometer data, formatted exactly how I need it."
+An **Application Programming Interface (API)** is like having a direct phone line to the KOF database. Instead of manually visiting their website, downloading files, and hoping they haven't changed the format or revised the data, you can simply "call" their database and say: "Give me the latest Konjunkturbarometer data, formatted exactly how I need it."
 
 Think of it like this:
 
@@ -30,13 +30,12 @@ Think of it like this:
 - **API** = Having the librarian automatically deliver the newest pages to your desk whenever you ask
 
 This blog post will show you how APIs work in practice, why they're everywhere in economic data, and how to use them effectively for your own research.
-<!-- Great metapher :-) I wonder how many BA students nowadays know what photocopying is... -->
 
 ## APIs in the Wild: How Economists Actually Use Them
 
 Good news: you don't have to build everything from scratch! In 2025, most major economic data providers offer APIs, including the [St. Louis Federal Reserve](https://fred.stlouisfed.org/docs/api/fred/), the Swiss Federal Statistical Office (BFS), and yes—the KOF Swiss Economic Institute.
 
-Even better news: clever programmers have created **API wrapper libraries** that make using these APIs as simple as calling a function. Think of them as translators that speak "API language" so you don't have to.
+Even better news: programmers have created **API wrapper libraries** that make using these APIs as simple as calling a function. Think of them as translators that speak "API language" so you don't have to.
 
 For Swiss economic data, you have ready-made tools like:
 - the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
@@ -51,6 +50,7 @@ Remember our thesis scenario? Here's how you'd solve it using the `kofdata` R pa
 # install.packages("kofdata")
 library(kofdata)
 baro_vint <- get_collection("globalbaro_vintages")
+# fetch specific data versions
 baro_2020_9 <- baro_vint$`globalbaro_leading_2020-09`
 baro_2025_9 <- baro_vint$`globalbaro_leading_2025-09`
 ts.plot(
@@ -94,29 +94,83 @@ The four main HTTP "verbs" are:
 - **PUT** = "Update existing data" (like revising a forecast)
 - **DELETE** = "Remove this data" (like deleting outdated entries)
 
-For economic data, you'll mostly use GET requests—we're usually retrieving and analyzing data, not modifying databases.
+For our example & fetching data, you'll mostly use GET requests—we're usually retrieving and analyzing data, not modifying databases.
 
-### Example: Building a KOF Barometer API
+### Example: Building a KOF Barometer API - The Basic Menu
 
-Let's create our own API that shares KOF Barometer data. We'll build endpoints where users can:
+Think of building this API and it's endpoint as a different service your API restaurant offers, using layers, like an onion: start simple, then add layers of functionality as needed. Begin with the outermost, easiest layer:
 
-- Get the complete time series: `/data`  
-- Get data from specific periods: `/data?start=2020&end=2024`
-- Even get a chart: `/plot`
+— an "Everything Please" endpoint that returns the full time series — and show students how to save and run that in `plumber` (a lightweight R package that turns R functions into web APIs) before introducing the next layer. 
+- Once the basic endpoint is working, explain why researchers might need more control (for example, requesting only pre‑pandemic data), then add a "Custom Order" layer that accepts start/end parameters and uses a helper like `partition_ts` to slice the series; this ordering keeps beginners from getting lost in complex control logic while giving advanced students the full implementation path.
 
-Here's how to do it with the `plumber` R package: 
-<!-- aurel: could you add a line on what the plumber package is? -->
 
+
+1. **The "Everything Please" endpoint**
+
+- using the `GET` HTTP request
+- fetch the complete time series using the endpoint `/data`
+
+```r
+library(plumber)
+#* Return entire KOF Barometer time series
+#* @get /data
+function() {
+  partition_ts(data$kofbarometer)
+}
+```
+
+When you run your API, you get an interactive documentation interface (called Swagger) that looks like this:
+
+![API Endpoint Overview](img/endpoints.png)
+
+We will create the 3 endpoints shown throughout this example. 
+
+![The "Everything Please"](img/data_endpoint.png)
+
+Since we just created the `/data` endpoint, see code snippet above, we will try it out and see the Response Body, which contains the entire Konjunkturbarometer time series.
+
+
+2. **The "Custom Order" endpoint** 
+
+- creates the endpoint `/filtered_data` which
+- lets users specify date ranges:
+- e.g. in the URL `/data?start=2020&end=2024`
+
+<!-- TODO: is it ok that i only introduce `partition_ts`in the next subpoint? -->
 ```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 # install the latest version
 # devtools::install_github("KOF-ch/kofdata")
-library(kofdata)
+library(kofdata) 
 # list_available_collections()
 data <- get_time_series("kofbarometer", show_progress = TRUE)
 str(data$kofbarometer)
 ```
 
 For this, we first need to create a function `partition_ts` which takes the parameters the API users pass to the endpoint, i.e. a start and end date. We then partition the time series according to those parameters. 
+
+```r
+#* @param ts time series object
+#* @param start date at which ts should start - can be years only, or c(year, month)
+#* @param end date at which ts should end - can be years only, or c(year, month)
+
+partition_ts <- function(ts, start = NULL, end = NULL) {
+  if (inherits(ts, "ts")) {
+    # setting start and end date if unset
+    if (is.null(end)) {
+      end <- time(ts)[length(ts)]
+    }
+    if (is.null(start)) {
+      start <- time(ts)[1]
+    }
+    # filter ts based on start & end dates
+    ts <- window(ts, start = start, end = end)
+  } else {
+    warning("Input is not a ts object")
+    return(NULL)
+  }
+  return(ts)
+}
+```
 
 ```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
 #* @param start date at which ts should start - can be years only, or c(year, month)
@@ -143,28 +197,7 @@ partition_ts <- function(ts, start = NULL, end = NULL) {
 partition_ts(data$kofbarometer, end = c(2010, 2))
 ```
 
-<!-- TODO: ask chat how to proceed with storytelling here -->
-
-<!-- aurel: maybe a suggestion for story here: instead of showing the partition_ts and the three functions at first, proceed like an onion. First the core, which is your “Everything Please” function without start and endpoint. Show how you save it in plumber and use it. Do not introduce partition_ts yet. 
-Then show why we need start and end points, for which we require “Custom Order” partition_ts. 
-So advanced studetns will get the whole story, while students unfamiliar with this content will get the main idea at first, and won't get lost. Also studetns are not familiar with reading complex functions with many control statements, so they might be distracted by code. -->
-
-Now comes the exciting part: building the actual API endpoints that researchers will use. Think of each endpoint as a different service your API restaurant offers.
-
-**The Basic Menu: Three Essential Endpoints**
-
-1. **The "Everything Please" endpoint** (`/data`) - gives users the complete time series:
-
-```r
-library(plumber)
-#* Return entire KOF Barometer time series
-#* @get /data
-function() {
-  partition_ts(data$kofbarometer)
-}
-```
-
-2. **The "Custom Order" endpoint** (`/filtered_data`) - lets users specify date ranges:
+We use the `partition_ts` function to create our new endpoint function
 
 ```r
 #* Return KOF Barometer data with custom date range
@@ -187,7 +220,25 @@ function(start = NULL, end = NULL) {
 }
 ```
 
-3. **The "Visual Takeaway" endpoint** (`/plotting`) - returns ready-made charts: 
+Let's create our own API that shares KOF Barometer data. We'll build endpoints where users can:
+
+- using the same endpoint from above
+- Get data from specific periods: `/data?start=2020&end=2024`
+- Even get a chart: `/plot`
+
+Let's test the `/filtered_data` endpoint by requesting KOF Barometer data from 2010 onwards:
+
+![Setting parameters for your API request](img/set_params.png)
+
+Hit "Execute" and voila—your API returns the exact data requested:
+
+![Your API returning filtered economic data](img/get_requests.png)
+
+
+3. **The "Visual Takeaway" endpoint** 
+
+- we create the `/plotting` endpoint
+- using the `GET` request, we return ready-made charts: 
 
 ```r
 #* Return KOF Barometer chart as PNG
@@ -198,10 +249,12 @@ function() {
 }
 ```
 
+![Using the /plotting Endpoint](img/plot_endpoint.png)
+
 ::: {.callout-tip}
 ## Testing Your API Locally
 
-Save all three functions in a file called `plumber.R`, then launch your API:
+Save all three functions in a file called `plumber.R` in the base of your working directory, then launch your API:
 
 ```r
 # Launch your API on port 8000
@@ -209,20 +262,6 @@ pr("plumber.R") %>%
   pr_run(port=8000)
 ```
 :::
-
-**Your API in Action**
-
-When you run your API, you get an interactive documentation interface (called Swagger) that looks like this:
-
-![Your API endpoints ready for testing](img/endpoints.png)
-
-Let's test the `/filtered_data` endpoint by requesting KOF Barometer data from 2015-2020:
-
-![Setting parameters for your API request](img/set_params.png)
-
-Hit "Execute" and voila—your API returns the exact data requested:
-
-![Your API returning filtered economic data](img/get_requests.png)
 
 **What Just Happened?** 
 
@@ -275,6 +314,7 @@ plot(data$kofbarometer)
 ```
 
 **Why This Matters for Your Research:**
+
 - **Reliability**: The KOF team maintains the wrapper, so it stays up-to-date
 - **Documentation**: Built-in help and examples
 - **Community**: Other economists use it, so you can get help
@@ -287,10 +327,4 @@ Whether you're using ready-made wrappers or building custom solutions, APIs tran
 **Before APIs:** Download → Save → Hope it's current → Manually update → Repeat  
 **With APIs:** Code once → Always current → Reproducible → Shareable
 
-Your future self (and your thesis supervisor) will thank you for learning this. In 2025, the economists who thrive are those who can seamlessly blend economic theory with data engineering skills.
-
-**Ready to get started?** Pick a dataset you're working with, find its API documentation, and try replacing your next manual download with an API call. Your research workflow will never be the same.
-
----
-
-*Want to see more examples? Check out the KOF data service documentation at [datenservice.kof.ethz.ch](https://datenservice.kof.ethz.ch) or explore other Swiss economic APIs through the Federal Statistical Office.*
+**Ready to get started?** Pick a dataset you're working with, find its API documentation, and try replacing your next manual download with an API call.
