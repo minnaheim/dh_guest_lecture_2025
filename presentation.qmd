@@ -21,24 +21,24 @@ devtools::install_github("KOF-ch/kofdata")
 - teaser: this is what you could do with an API (not the plotting, but getting data), and so much more  -->
 
 ## How do we get the data for this Plot?{.smaller}
+<!-- TODO: how do we reconstruct it? aka create our own index -->
 
 ```{r, echo=FALSE,results='hide',fig.keep='all'}
 # install.packages("quantmod")
-library(quantmod)
+library(kofdata)
+baro_vint <- get_collection("globalbaro_vintages")
+baro_20210 <- baro_vint$`globalbaro_leading_2025-09`
 
-# calls data into workspace, prints ticker
-getSymbols("LISN.SW", src = "yahoo", from = "2023-01-24")
-
-# inspect data
-head(LISN.SW)
-
-# TODO: plot difference between open and closing price (volatility measure)
-ts.plot(
-  LISN.SW$LISN.SW.Open,
-  gpars = list(xlab = "Time", ylab = "Open Price"),
-  main = "Lindt & Sprüngli Stock Price (Open)"
+plot <- stats::ts.plot(
+  baro_20210,
+  gpars = list(
+    xlab = "Year",
+    ylab = "Value",
+    main = "KOF Global Barometer"
+  )
 )
 
+plot
 ```
 
 ## About me 
@@ -73,7 +73,7 @@ ts.plot(
 - build your own mini wrapper
 - learn to identify and understand the use of APIs in real-world contexts 
 
-# Let's say, you want to get some stock data 
+# Let's say, you want to construct your own Economic Index 
 <!-- TODO: put this into one slide, with subset? -->
 
 <!-- 
@@ -85,18 +85,23 @@ ts.plot(
 - clean, etc. 
 - what if you want to do this more often? -> umständlich! 
 -->
-# "Human Way"
+# Human Way
 
-## Check out Yahoo Data
-![](img/yahoo_lisn.png){fig-align="center"}
+## 
+![](img/google_datasets.png){fig-align="center"}
 
-## Find a Data Table
-![](img/lisn_table.png){fig-align="center"}
+## 
+![](img/wirtschaftsdaten.png){fig-align="center"}
 
-## Copy data into IDE
-![](img/imported_lisn.png){fig-align="center"}
+## 
+![](img/search.png){fig-align="center"}
+
+## 
+![](img/downloaded.png){fig-align="center"}
+<!-- it looks like this because this is for non-technical people, and because its nice to look at -->
 
 ## Import Data {.smaller}
+<!-- TODO: do this with the current example -->
 
 ::: {.panel-tabset}
 
@@ -168,139 +173,125 @@ head(data, n = 12)
 
 :::
 
-# "API/programming way" (work in progress)
+# API (wrapper) way
+
 
 
 ## 
-<!-- TODO: maybe design your own diagram based on stock example -->
+<!-- TODO: design your own diagram based on example -->
 ![](/img/api_diagram.webp){fig-align="center"}
 <!-- explain: GET POST PUT DELETE  -->
+<!-- add: params, call it endpoints, request & response & wrapper -->
+<!-- adapt example to BFS example -->
 
-## This is what API Documentation looks like (using API Ninja)
-- since yahoo finance API is down
-<!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things -->
-<!-- by googling, and trying out which API services, such as Ninja API offer, and if it's free or not, you find out what works best for your needs -->
-- we can use alternative (non-open source) APIs 
-- such as [API Ninja](https://api-ninjas.com/api/stockprice) 
-- need to get an API key (free) to get current stock prices
-- need to pay to get historical stock prices
-
-## 
-![](img/endpoint_desc_ninja.png){fig-align="center"}
-
-## 
-![](img/sample_request_ninja_blurred.png){fig-align="center"}
-
-<!-- but this is just a representation. In real life, calling an API can look like this... -->
-# Typical Usage of an API 
-
-## 1. Using API Ninja (paying) {.smaller}
+## Use the BFS API Wrapper for R {.smaller}
+<!-- this is the most frequent way which you will encounter APIs, wrapped -->
 ::: {.panel-tabset}
 
-### cURL
-```bash
-curl -X GET "https://api.api-ninjas.com/v1/stockprice?ticker=LISN.SW" \
-  -H "X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."
+### code 
+```r
+# devtools::install_github("lgnbhl/BFS")
+library(BFS)
+library(tidyverse)
+
+bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- "px-x-0204000000_106"
+energy_df <- bfs_get_data(dataset_nr, lang = "en")
+
+# filter only total energy accounts
+total_energy <- energy_df |>
+  # get only total for each category
+  filter(`Economy and households` == "Economy and households - Total") |>
+  filter(`Energy product` == "Energy product - Total") |>
+  # rename Energy accounts of economy and households to amount
+  select(Year, Amount = `Energy accounts of economy and households`)
+
+
+# View(total_energy)
+head(total_energy, n=10)
 ```
 
-### execute in terminal
+### output 1
 
-![](img/terminal_call.png){fig-align="center"}
-
-### output
-```json
-{
-  "ticker": "LISN.SW",
-  "name": "Chocoladefabriken Lindt & Sprüngli AG",
-  "price": 119800,
-  "exchange": "SIX",
-  "updated": 1759137307,
-  "currency": "CHF"
-}
+```{r catalog data}
+library(BFS)
+print(bfs_get_catalog_data(language = "en", title = "energy"))
 ```
 
-### cURL of historical prices
-```bash
-curl -X GET 
-"https://api.api-ninjas.com/v1/stockpricehistorical?ticker=LISN.SW&period=1d&start=1756052365&end=1758730765" \
-  -H "X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."
+### output 2
+```{r bfs api wrapper}
+# devtools::install_github("lgnbhl/BFS")
+library(BFS)
+
+# bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- "px-x-0204000000_106"
+energy_df <- bfs_get_data(dataset_nr, lang = "en")
+head(energy_df)
+```
+
+### output 3
+```{r bfs api wrapper tidyverse}
+# devtools::install_github("lgnbhl/BFS")
+library(tidyverse)
+library(BFS)
+
+# bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- "px-x-0204000000_106"
+energy_df <- bfs_get_data(dataset_nr, lang = "en")
+
+# filter only total energy accounts
+total_energy <- energy_df |>
+  # get only total for each category
+  filter(`Economy and households` == "Economy and households - Total") |>
+  filter(`Energy product` == "Energy product - Total") |>
+  # rename Energy accounts of economy and households to amount
+  select(Year, Amount = `Energy accounts of economy and households`)
+
+head(total_energy, n=10)
 ```
 
 :::
 
+## How the BFS API looks like
+- here i am unsure on how to proceed: give them homework (go through package)
+- or show them myself
 
+##
+![](img/bfs-code.png){fig-align="center"}
 
-## 2. Using an (unofficial) link that is free{.smaller}
-
-<!-- TODO: One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->
-::: {.panel-tabset}
-
-### link
-
-We can use the link:
-
-`https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1dyaho&events=history`
-
-- ticker = `LISN.SW`
-- period1 = 24.08.2025 
-- period2 = 24.09.2025
-- interval = 1 day
-- events = history (= historical prices)
-
-<!-- 
- https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1d&events=history
- period1 = 1756052365 (24.08.2025)
- period2 = 1758730765 (24.09.2025) -->
-
-### output
-
-![](img/yahoo_fin_query.png)
-<!-- show this in person -->
-
-:::
-
-## 3. Using an API Wrapper {.smaller}
-
-::: {.panel-tabset}
-
-### code
+## Let's review this
 
 ```r
-# install.packages("quantmod")
-library(quantmod)
+bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
+  language <- match.arg(arg = language, choices = c("de", "fr", "it", "en"))
+  # parameters can be seen here
+  pxweb_api_url <- paste0("https://www.pxweb.bfs.admin.ch/api/v1/", language, "/", number_bfs, "/", number_bfs, ".px")
+  # if too many requests HTTP 429
+  # base url
+  df_json <- httr2::request("https://www.pxweb.bfs.admin.ch/api/v1") %>%
+    # add parameters
+    httr2::req_url_path_append(paste0(language, "/", number_bfs, "/", number_bfs, ".px")) %>%
+    httr2::req_retry(max_tries = 2, max_seconds = 10) %>%
+    # executre request
+    httr2::req_perform() %>%
+    # transform response to json
+    httr2::resp_body_json(simplifyVector = TRUE)
 
-# calls data into workspace, prints ticker
-getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
-
-# inspect data
-head(LISN.SW)
 ```
+## Let's try it out {.smaller}
 
-### output
-```{r}
-# install.packages("quantmod")
-library(quantmod)
+::: {.panel-tabset}
 
-# calls data into workspace, prints ticker
-getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
+### browser
+![](img/browser.png)
 
-# inspect data
-head(LISN.SW)
-```
-
-### charts
-```{r}
-# install.packages("quantmod")
-library(quantmod)
-
-# calls data into workspace, prints ticker
-getSymbols("LISN.SW", src = "yahoo", from = "2025-08-24")
-
-# quantmod chart
-chartSeries(LISN.SW, theme = chartTheme("white"))
-```
+### cURL
 
 :::
+<!-- show cURL, etc. of using API -->
+
+
+# Let's try to build our own API wrapper 
 
 ## Other examples of API wrappers for economic data
 
