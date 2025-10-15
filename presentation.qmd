@@ -177,12 +177,15 @@ head(data, n = 12)
 
 
 
-## 
+## APIs 
 <!-- TODO: design your own diagram based on example -->
-![](/img/api_diagram.webp){fig-align="center"}
+![](/img/api_diagram_example.png){fig-align="center" width=80%}
 <!-- explain: GET POST PUT DELETE  -->
 <!-- add: params, call it endpoints, request & response & wrapper -->
 <!-- adapt example to BFS example -->
+
+## API wrappers 
+![](/img/api_wrapper_example.png){fig-align="center"}
 
 ## Use the BFS API Wrapper for R {.smaller}
 <!-- this is the most frequent way which you will encounter APIs, wrapped -->
