@@ -75,6 +75,30 @@ Your thesis supervisor asks for updated results? Just re-run your code. The KOF 
 
 But what if there's no ready-made wrapper for the data you need? Let's learn how APIs actually work under the hood, so you can build your own solutions.
 
+
+## Building Custom API Wrappers
+<!-- TODO: do this but instead of collection, get different data series, that doesn't exist, or different data, or something -->
+
+```{r}
+## CHANGE THIS EXAMPLE
+library(httr)
+library(jsonlite)
+
+# Custom function for pre-COVID KOF data
+get_kof_pre_covid <- function() {
+  base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
+  query <- list(
+    keys = "ch.kof.barometer",
+    end = "2019-12-31" # Hard-coded cutoff for pre-COVID analysis
+  )
+
+  response <- GET(base_url, query = query)
+  data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
+
+  return(data)
+}
+```
+
 ## Building Your Own API: Sharing KOF Data Like a Pro
 
 Now imagine you're working at KOF and want to share the Konjunkturbarometer data with researchers worldwide. How would you build an API like the one we just used? It's actually not rocket science!
@@ -269,49 +293,7 @@ Swagger is your API's user-friendly interface, but behind the scenes, researcher
 
 ![How real API calls work in practice](img/real_call.png)
 
-Congratulations! You've just built a professional-grade economic data API. But there's more to the story...
-
-## From API Builder to API User: The Full Circle
-
-Now that you understand how APIs work from the inside, let's explore the three ways economists typically interact with economic data APIs in practice.
-
-### Method 1: Building Custom API Wrappers
-
-Sometimes you need very specific functionality that doesn't exist yet. For example, let's say you're studying the COVID-19 impact on Swiss economics and need KOF Barometer data **only up to 2019** (pre-pandemic baseline) for comparison studies.
-
-You could build a custom wrapper around the KOF API:
-
-```{r}
-library(httr)
-library(jsonlite)
-
-# Custom function for pre-COVID KOF data
-get_kof_pre_covid <- function() {
-  base_url <- "https://datenservice.kof.ethz.ch/api/v1/public/ts"
-  query <- list(
-    keys = "ch.kof.barometer",
-    end = "2019-12-31" # Hard-coded cutoff for pre-COVID analysis
-  )
-
-  response <- GET(base_url, query = query)
-  data <- fromJSON(content(response, as = "text", encoding = "UTF-8"))
-
-  return(data)
-}
-```
-
-**The Reality Check:** Building and hosting your own API costs money (DigitalOcean, AWS, etc.) and requires maintenance. For most research projects, this is overkill.
-
-### Method 2: Using Existing API Wrappers (The Smart Choice)
-
-This is where most economists land, and for good reason. Remember that `kofdata` package we used earlier? It's doing all the heavy lifting for you:
-
-```{r}
-# The magic happens in just two lines
-library(kofdata)
-data <- get_time_series("kofbarometer")
-plot(data$kofbarometer)
-```
+Congratulations! You've just built a professional-grade economic data API.
 
 **Why This Matters for Your Research:**
 
