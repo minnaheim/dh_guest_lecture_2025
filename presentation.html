@@ -406,6 +406,7 @@ Minna Heim
 
 <section id="how-do-we-get-the-data-for-this-plot" class="slide level2 smaller">
 <h2>How do we get the data for this Plot?</h2>
+<!-- TODO: how do we reconstruct it? aka create our own index -->
 
 <img data-src="presentation_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"></section>
 <section id="about-me" class="slide level2">
@@ -440,8 +441,8 @@ Minna Heim
 <li>learn to identify and understand the use of APIs in real-world contexts</li>
 </ul>
 </section>
-<section id="lets-say-you-want-to-get-some-stock-data" class="title-slide slide level1 center">
-<h1>Let’s say, you want to get some stock data</h1>
+<section id="construct-your-own-economic-index" class="title-slide slide level1 center">
+<h1>Construct your own Economic Index</h1>
 <!-- TODO: put this into one slide, with subset? -->
 <!-- 
 - let's say we want to get the stock prices of lindt & sprüngli for the last month
@@ -456,69 +457,75 @@ Minna Heim
 
 <section>
 <section id="human-way" class="title-slide slide level1 center">
-<h1>“Human Way”</h1>
+<h1>Human Way</h1>
 
 </section>
-<section id="check-out-yahoo-data" class="slide level2">
-<h2>Check out Yahoo Data</h2>
+<section id="section" class="slide level2">
+<h2></h2>
 
-<img data-src="img/yahoo_lisn.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="find-a-data-table" class="slide level2">
-<h2>Find a Data Table</h2>
+<img data-src="img/google_datasets.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-1" class="slide level2">
+<h2></h2>
 
-<img data-src="img/lisn_table.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="copy-data-into-ide" class="slide level2">
-<h2>Copy data into IDE</h2>
+<img data-src="img/wirtschaftsdaten.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-2" class="slide level2">
+<h2></h2>
 
-<img data-src="img/imported_lisn.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="import-data" class="slide level2 smaller">
-<h2>Import Data</h2>
+<img data-src="img/search.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<p><img data-src="img/downloaded.png" class="quarto-figure quarto-figure-center"> <!-- it looks like this because this is for non-technical people, and because its nice to look at --></p>
+</section>
+<section id="import-clean-data" class="slide level2 smaller">
+<h2>Import &amp; Clean Data</h2>
+<!-- TODO: do this with the current example -->
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Code</a></li><li><a href="#tabset-1-2">Data</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1">
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(readr)</span>
-<span id="cb1-2"><a></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb1-3"><a></a><span class="co"># Read all lines as a single column</span></span>
-<span id="cb1-4"><a></a>raw_data <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">"lisn-sw.txt"</span>)</span>
-<span id="cb1-5"><a></a></span>
-<span id="cb1-6"><a></a><span class="co"># The first 7 lines are headers</span></span>
-<span id="cb1-7"><a></a>headers <span class="ot">&lt;-</span> raw_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>]</span>
-<span id="cb1-8"><a></a><span class="co"># the rest is the actual data</span></span>
-<span id="cb1-9"><a></a>data_lines <span class="ot">&lt;-</span> raw_data[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)]</span>
-<span id="cb1-10"><a></a></span>
-<span id="cb1-11"><a></a><span class="co"># set the column and row lengths</span></span>
-<span id="cb1-12"><a></a>n_cols <span class="ot">&lt;-</span> <span class="fu">length</span>(headers)</span>
-<span id="cb1-13"><a></a>n_rows <span class="ot">&lt;-</span> <span class="fu">length</span>(data_lines) <span class="sc">/</span> n_cols</span>
-<span id="cb1-14"><a></a></span>
-<span id="cb1-15"><a></a><span class="co"># Create matrix and convert to data frame</span></span>
-<span id="cb1-16"><a></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data_lines, <span class="at">nrow =</span> n_rows, <span class="at">ncol =</span> n_cols, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-17"><a></a>data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(data_matrix)</span>
-<span id="cb1-18"><a></a><span class="fu">colnames</span>(data) <span class="ot">&lt;-</span> headers</span>
-<span id="cb1-19"><a></a></span>
-<span id="cb1-20"><a></a><span class="co"># convert columns to correct formats using lubridate</span></span>
-<span id="cb1-21"><a></a>data<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">mdy</span>(data<span class="sc">$</span>Date)</span>
-<span id="cb1-22"><a></a><span class="co"># remove commas and convert to numeric</span></span>
-<span id="cb1-23"><a></a>data[, <span class="sc">-</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data[, <span class="sc">-</span><span class="dv">1</span>], parse_number)</span>
-<span id="cb1-24"><a></a></span>
-<span id="cb1-25"><a></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-2"><a></a>data <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"examples/je-d-04.02.01.03.xlsx"</span>) </span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a><span class="co"># subset only the rows 3 (= year) and 9 (= gdp)</span></span>
+<span id="cb1-5"><a></a>gdp <span class="ot">&lt;-</span> data[<span class="dv">9</span>,]</span>
+<span id="cb1-6"><a></a><span class="fu">names</span>(gdp) <span class="ot">&lt;-</span> data[<span class="dv">3</span>,]</span>
+<span id="cb1-7"><a></a></span>
+<span id="cb1-8"><a></a><span class="co"># pivot data longer (from excel wide format to data frame long format)</span></span>
+<span id="cb1-9"><a></a>gdp_long <span class="ot">&lt;-</span> gdp <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb1-11"><a></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb1-12"><a></a>    <span class="at">names_to =</span> <span class="st">"Year"</span>,</span>
+<span id="cb1-13"><a></a>    <span class="at">values_to =</span> <span class="st">"GDP"</span></span>
+<span id="cb1-14"><a></a>  )</span>
+<span id="cb1-15"><a></a></span>
+<span id="cb1-16"><a></a><span class="co"># remove old headers </span></span>
+<span id="cb1-17"><a></a>gdp_long <span class="ot">&lt;-</span> gdp_long[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>),]</span>
+<span id="cb1-18"><a></a></span>
+<span id="cb1-19"><a></a><span class="co"># check structure</span></span>
+<span id="cb1-20"><a></a><span class="co"># str(gdp_long)</span></span>
+<span id="cb1-21"><a></a></span>
+<span id="cb1-22"><a></a><span class="co"># convert to gdp numeric and year to year</span></span>
+<span id="cb1-23"><a></a>gdp_long<span class="sc">$</span>GDP <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(gdp_long<span class="sc">$</span>GDP)</span>
+<span id="cb1-24"><a></a>gdp_long<span class="sc">$</span>Year <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(gdp_long<span class="sc">$</span>Year)</span>
+<span id="cb1-25"><a></a></span>
+<span id="cb1-26"><a></a><span class="fu">head</span>(gdp_long, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-1-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>         Date   Open   High    Low Close  Adj Close  Volume
-1  2025-09-24 120800 121600 120600 121000     121000     11
-2  2025-09-23 121600 122400 120200 120800     120800     72
-3  2025-09-22 123000 123200 121200 121200     121200     83
-4  2025-09-19 120800 123000 120000 123000     123000    397
-5  2025-09-18 120800 122400 120800 121800     121800    104
-6  2025-09-17 121200 122400 120200 120200     120200     61
-7  2025-09-16 124000 124000 121200 121200     121200     67
-8  2025-09-15 124800 124800 123200 124400     124400     89
-9  2025-09-12 125000 125800 124200 124800     124800     55
-10 2025-09-11 125000 125400 124200 124600     124600     52
-11 2025-09-10 125200 126000 124000 124600     124600     90
-12 2025-09-09 125200 125200 124200 125200     125200     93</code></pre>
+<pre><code># A tibble: 10 × 2
+    Year     GDP
+   &lt;int&gt;   &lt;dbl&gt;
+ 1  1995 423515.
+ 2  1996 426882.
+ 3  1997 433747.
+ 4  1998 444955.
+ 5  1999 453531.
+ 6  2000 476794.
+ 7  2001 489674.
+ 8  2002 489293.
+ 9  2003 493652.
+10  2004 508608.</code></pre>
 </div>
 </div>
 </div>
@@ -526,149 +533,359 @@ Minna Heim
 </div>
 </section></section>
 <section>
-<section id="apiprogramming-way-work-in-progress" class="title-slide slide level1 center">
-<h1>“API/programming way” (work in progress)</h1>
+<section id="api-wrapper-way" class="title-slide slide level1 center">
+<h1>API (wrapper) way</h1>
 
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
-<!-- TODO: maybe design your own diagram based on stock example -->
-<p><img data-src="./img/api_diagram.webp" class="quarto-figure quarto-figure-center"> <!-- explain: GET POST PUT DELETE  --></p>
+<section id="apis-conceptually" class="slide level2">
+<h2>APIs Conceptually</h2>
+<!-- TODO: why not centered when using quarto? -->
+<p><img src="./img/api_diagram_example.png" style="display:block; margin:0 auto; width:70%;"> <!-- explain: GET POST PUT DELETE  --></p>
 </section>
-<section id="this-is-what-api-documentation-looks-like-using-api-ninja" class="slide level2">
-<h2>This is what API Documentation looks like (using API Ninja)</h2>
-<ul>
-<li>since yahoo finance API is down <!-- this is the reality sometimes, need to find other ways, if data provider isn't on top of things --> <!-- by googling, and trying out which API services, such as Ninja API offer, and if it's free or not, you find out what works best for your needs --></li>
-<li>we can use alternative (non-open source) APIs</li>
-<li>such as <a href="https://api-ninjas.com/api/stockprice">API Ninja</a></li>
-<li>need to get an API key (free) to get current stock prices</li>
-<li>need to pay to get historical stock prices</li>
-</ul>
-</section>
-<section id="section-1" class="slide level2">
-<h2></h2>
+<section id="api-wrappers" class="slide level2">
+<h2>API wrappers</h2>
+<!-- API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
 
-<img data-src="img/endpoint_desc_ninja.png" class="quarto-figure quarto-figure-center r-stretch"></section>
-<section id="section-2" class="slide level2">
-<h2></h2>
-
-<!-- but this is just a representation. In real life, calling an API can look like this... -->
-<img data-src="img/sample_request_ninja_blurred.png" class="quarto-figure quarto-figure-center r-stretch"></section></section>
-<section>
-<section id="typical-usage-of-an-api" class="title-slide slide level1 center">
-<h1>Typical Usage of an API</h1>
-
-</section>
-<section id="using-api-ninja-paying" class="slide level2 smaller">
-<h2>1. Using API Ninja (paying)</h2>
+<img data-src="./img/api_wrapper_example.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="use-the-bfs-api-wrapper-for-r" class="slide level2 smaller">
+<h2>Use the BFS API Wrapper for R</h2>
+<!-- this is the most frequent way which you will encounter APIs, wrapped -->
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">cURL</a></li><li><a href="#tabset-2-2">execute in terminal</a></li><li><a href="#tabset-2-3">output</a></li><li><a href="#tabset-2-4">cURL of historical prices</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">code</a></li><li><a href="#tabset-2-2">output 1</a></li><li><a href="#tabset-2-3">output 2</a></li><li><a href="#tabset-2-4">output 3</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
-<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">curl</span> <span class="at">-X</span> GET <span class="st">"https://api.api-ninjas.com/v1/stockprice?ticker=LISN.SW"</span> <span class="dt">\</span></span>
-<span id="cb3-2"><a></a>  <span class="at">-H</span> <span class="st">"X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># devtools::install_github("lgnbhl/BFS")</span></span>
+<span id="cb3-2"><a></a><span class="fu">library</span>(BFS)</span>
+<span id="cb3-3"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-4"><a></a></span>
+<span id="cb3-5"><a></a><span class="fu">bfs_get_catalog_data</span>(<span class="at">language =</span> <span class="st">"en"</span>, <span class="at">title =</span> <span class="st">"energy"</span>)</span>
+<span id="cb3-6"><a></a>dataset_nr <span class="ot">&lt;-</span> <span class="st">"px-x-0204000000_106"</span></span>
+<span id="cb3-7"><a></a>energy_df <span class="ot">&lt;-</span> <span class="fu">bfs_get_data</span>(dataset_nr, <span class="at">lang =</span> <span class="st">"en"</span>)</span>
+<span id="cb3-8"><a></a></span>
+<span id="cb3-9"><a></a><span class="co"># filter only total energy accounts</span></span>
+<span id="cb3-10"><a></a>total_energy <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb3-11"><a></a>  energy_df,</span>
+<span id="cb3-12"><a></a>  <span class="co"># filter for totals for each of the columns </span></span>
+<span id="cb3-13"><a></a>  <span class="st">`</span><span class="at">Economy and households</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Economy and households - Total"</span> <span class="sc">&amp;</span></span>
+<span id="cb3-14"><a></a>  <span class="st">`</span><span class="at">Energy product</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Energy product - Total"</span>,</span>
+<span id="cb3-15"><a></a>  <span class="co"># select only the two relevant columns</span></span>
+<span id="cb3-16"><a></a>  <span class="at">select =</span> <span class="fu">c</span>(Year, <span class="st">`</span><span class="at">Energy accounts of economy and households</span><span class="st">`</span>)</span>
+<span id="cb3-17"><a></a>)</span>
+<span id="cb3-18"><a></a></span>
+<span id="cb3-19"><a></a><span class="fu">names</span>(total_energy)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Amount"</span></span>
+<span id="cb3-20"><a></a></span>
+<span id="cb3-21"><a></a><span class="co"># View(total_energy)</span></span>
+<span id="cb3-22"><a></a><span class="fu">head</span>(total_energy, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-2-2">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="img/terminal_call.png" class="quarto-figure quarto-figure-center"></p>
-</figure>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  title                 language number_bfs number_asset publication_date url_px
+  &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;date&gt;           &lt;chr&gt; 
+1 Energy accounts of e… en       px-x-0204… 36179320     2025-09-30       https…</code></pre>
+</div>
 </div>
 </div>
 <div id="tabset-2-3">
-<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource json number-lines code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a></a><span class="fu">{</span></span>
-<span id="cb4-2"><a></a>  <span class="dt">"ticker"</span><span class="fu">:</span> <span class="st">"LISN.SW"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a></a>  <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"Chocoladefabriken Lindt &amp; Sprüngli AG"</span><span class="fu">,</span></span>
-<span id="cb4-4"><a></a>  <span class="dt">"price"</span><span class="fu">:</span> <span class="dv">119800</span><span class="fu">,</span></span>
-<span id="cb4-5"><a></a>  <span class="dt">"exchange"</span><span class="fu">:</span> <span class="st">"SIX"</span><span class="fu">,</span></span>
-<span id="cb4-6"><a></a>  <span class="dt">"updated"</span><span class="fu">:</span> <span class="dv">1759137307</span><span class="fu">,</span></span>
-<span id="cb4-7"><a></a>  <span class="dt">"currency"</span><span class="fu">:</span> <span class="st">"CHF"</span></span>
-<span id="cb4-8"><a></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  `Unit of measure` `Economy and households`       `Energy product`       Year 
+  &lt;chr&gt;             &lt;chr&gt;                          &lt;chr&gt;                  &lt;chr&gt;
+1 Terajoules        Economy and households - Total Energy product - Total 2000 
+2 Terajoules        Economy and households - Total Energy product - Total 2001 
+3 Terajoules        Economy and households - Total Energy product - Total 2002 
+4 Terajoules        Economy and households - Total Energy product - Total 2003 
+5 Terajoules        Economy and households - Total Energy product - Total 2004 
+6 Terajoules        Economy and households - Total Energy product - Total 2005 
+# ℹ 1 more variable: `Energy accounts of economy and households` &lt;dbl&gt;</code></pre>
+</div>
+</div>
 </div>
 <div id="tabset-2-4">
-<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">curl</span> <span class="at">-X</span> GET </span>
-<span id="cb5-2"><a></a><span class="st">"https://api.api-ninjas.com/v1/stockpricehistorical?ticker=LISN.SW&amp;period=1d&amp;start=1756052365&amp;end=1758730765"</span> <span class="dt">\</span></span>
-<span id="cb5-3"><a></a>  <span class="at">-H</span> <span class="st">"X-Api-Key: 6/wyfliT2QImYkxqgKJg9g==Y...."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   Year    Amount
+   &lt;chr&gt;    &lt;dbl&gt;
+ 1 2000  1103603.
+ 2 2001  1127768.
+ 3 2002  1112879.
+ 4 2003  1130842.
+ 5 2004  1131767.
+ 6 2005  1121999.
+ 7 2006  1157170.
+ 8 2007  1126804.
+ 9 2008  1158734.
+10 2009  1136915.</code></pre>
 </div>
 </div>
 </div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="bfs-api---under-the-hood" class="title-slide slide level1 center">
+<h1>BFS API - under the hood</h1>
+
 </section>
-<section id="using-an-unofficial-link-that-is-free" class="slide level2 smaller">
-<h2>2. Using an (unofficial) link that is free</h2>
-<!-- TODO: One thing I would pay attention to: since this is new for students, I would emphasize what was your thought process when preparing the example. More concretely: how did you know about ninja API, how did you know where to look? and how did you find out about query1.finance.yahoo.com/v8/finance/? did you google it?  -->
+<section id="section-4" class="slide level2">
+<h2></h2>
+
+<img data-src="img/bfs-code.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="lets-take-a-closer-look" class="slide level2 smaller">
+<h2>Let’s take a closer look</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>bfs_get_data <span class="ot">&lt;-</span> <span class="cf">function</span>(number_bfs, <span class="at">language =</span> <span class="st">"de"</span>, <span class="at">query =</span> <span class="cn">NULL</span>, <span class="at">column_name_type =</span> <span class="st">"text"</span>, <span class="at">variable_value_type =</span> <span class="st">"text"</span>, <span class="at">clean_names =</span> <span class="cn">FALSE</span>, <span class="at">delay =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb7-2"><a></a>  <span class="co"># parameters can be seen here</span></span>
+<span id="cb7-3"><a></a>  pxweb_api_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://www.pxweb.bfs.admin.ch/api/v1/"</span>, language, <span class="st">"/"</span>, number_bfs, <span class="st">"/"</span>, number_bfs, <span class="st">".px"</span>)</span>
+<span id="cb7-4"><a></a>  <span class="co"># if too many requests HTTP 429</span></span>
+<span id="cb7-5"><a></a>  <span class="co"># base url</span></span>
+<span id="cb7-6"><a></a>  df_json <span class="ot">&lt;-</span> httr2<span class="sc">::</span><span class="fu">request</span>(<span class="st">"https://www.pxweb.bfs.admin.ch/api/v1"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a></a>    <span class="co"># add parameters</span></span>
+<span id="cb7-8"><a></a>    httr2<span class="sc">::</span><span class="fu">req_url_path_append</span>(<span class="fu">paste0</span>(language, <span class="st">"/"</span>, number_bfs, <span class="st">"/"</span>, number_bfs, <span class="st">".px"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a></a>    httr2<span class="sc">::</span><span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">2</span>, <span class="at">max_seconds =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a></a>    <span class="co"># executre request</span></span>
+<span id="cb7-11"><a></a>    httr2<span class="sc">::</span><span class="fu">req_perform</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a></a>    <span class="co"># transform response to json</span></span>
+<span id="cb7-13"><a></a>    httr2<span class="sc">::</span><span class="fu">resp_body_json</span>(<span class="at">simplifyVector =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="lets-try-it-out" class="slide level2 smaller">
+<h2>Let’s try it out</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">link</a></li><li><a href="#tabset-3-2">output</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">browser</a></li><li><a href="#tabset-3-2">cURL</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1">
-<p>We can use the link:</p>
-<p><code>https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&amp;period2=1758730765&amp;interval=1dyaho&amp;events=history</code></p>
-<ul>
-<li>ticker = <code>LISN.SW</code></li>
-<li>period1 = 24.08.2025</li>
-<li>period2 = 24.09.2025</li>
-<li>interval = 1 day</li>
-<li>events = history (= historical prices)</li>
-</ul>
-<!-- 
- https://query1.finance.yahoo.com/v8/finance/chart/LISN.SW?period1=1756052365&period2=1758730765&interval=1d&events=history
- period1 = 1756052365 (24.08.2025)
- period2 = 1758730765 (24.09.2025) -->
+<p><img data-src="img/browser.png"></p>
 </div>
 <div id="tabset-3-2">
-<p><img data-src="img/yahoo_fin_query.png"> <!-- show this in person --></p>
+
 </div>
 </div>
 </div>
+<!-- show cURL, etc. of using API -->
 </section>
-<section id="using-an-api-wrapper" class="slide level2 smaller">
-<h2>3. Using an API Wrapper</h2>
+<section id="why-apis" class="slide level2">
+<h2>Why APIs?</h2>
+<!-- maybe by now, you have some ideas as to why API's are useful... -->
+<ul>
+<li>automation</li>
+<li>easier to fetch specific data (specify time, specific indicators)</li>
+<li>real time data</li>
+<li>API usage (often) so much easier than scraping &amp; downloading &amp; reading &amp; cleaning!! (all-in-1)</li>
+<li>used everywhere!</li>
+</ul>
+</section></section>
+<section>
+<section id="exercises-build-your-own-api-wrapper" class="title-slide slide level1 center">
+<h1>Exercises: Build your own API wrapper</h1>
+
+</section>
+<section id="httr2-cheatsheet" class="slide level2 smaller">
+<h2>httr2 cheatsheet</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Request</strong></td>
+<td><code>request()</code></td>
+<td>Creates a new HTTP request object that defines the endpoint and method (e.g., GET, POST).</td>
+</tr>
+<tr class="even">
+<td><strong>Request</strong></td>
+<td><code>req_perform()</code></td>
+<td>Sends the built request to the server and <em>returns the response object</em>.</td>
+</tr>
+<tr class="odd">
+<td><strong>Response</strong></td>
+<td><code>resp_body_json()</code></td>
+<td>Parses the response body as JSON and returns it as an R list.</td>
+</tr>
+<tr class="even">
+<td><strong>Response</strong></td>
+<td><code>resp_status()</code></td>
+<td>Retrieves the HTTP status from the response object.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="covid-19-api" class="slide level2">
+<h2>COVID 19 API</h2>
+<ul>
+<li>building our Economic Index</li>
+<li>for the time during and post covid</li>
+<li>for this, get vaccination and COVID 19 case rates (incl.&nbsp;death &amp; recovery)</li>
+</ul>
+</section>
+<section id="section-5" class="slide level2">
+<h2></h2>
+
+<img data-src="./img/swagger_overview.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-6" class="slide level2">
+<h2></h2>
+
+<img data-src="./img/historical_endpoint.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="section-7" class="slide level2">
+<h2></h2>
+
+<img data-src="./img/try_out_endpoint.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="get-covid-case-counts" class="slide level2 smaller">
+<h2>GET COVID Case Counts</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">code</a></li><li><a href="#tabset-4-2">output</a></li><li><a href="#tabset-4-3">charts</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">Code</a></li><li><a href="#tabset-4-2">Data</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1">
-<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># install.packages("quantmod")</span></span>
-<span id="cb6-2"><a></a><span class="fu">library</span>(quantmod)</span>
-<span id="cb6-3"><a></a></span>
-<span id="cb6-4"><a></a><span class="co"># calls data into workspace, prints ticker</span></span>
-<span id="cb6-5"><a></a><span class="fu">getSymbols</span>(<span class="st">"LISN.SW"</span>, <span class="at">src =</span> <span class="st">"yahoo"</span>, <span class="at">from =</span> <span class="st">"2025-08-24"</span>)</span>
-<span id="cb6-6"><a></a></span>
-<span id="cb6-7"><a></a><span class="co"># inspect data</span></span>
-<span id="cb6-8"><a></a><span class="fu">head</span>(LISN.SW)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">library</span>(httr2)</span>
+<span id="cb8-2"><a></a></span>
+<span id="cb8-3"><a></a>get_case_counts <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">country =</span> <span class="st">"CH"</span>, <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">365</span>, <span class="st">"all"</span>)){</span>
+<span id="cb8-4"><a></a>  <span class="co"># "https://disease.sh/v3/covid-19/historical/CH?lastdays=30"</span></span>
+<span id="cb8-5"><a></a>  <span class="co"># this way is error prone, try to match.args to check if the inputs are correct</span></span>
+<span id="cb8-6"><a></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://disease.sh/v3/covid-19/historical"</span></span>
+<span id="cb8-7"><a></a>  final_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(base_url, <span class="st">"/"</span>, country, <span class="st">"?lastdays="</span>, period)</span>
+<span id="cb8-8"><a></a></span>
+<span id="cb8-9"><a></a>  <span class="co"># perform API call with httr2</span></span>
+<span id="cb8-10"><a></a>  req <span class="ot">&lt;-</span> <span class="fu">request</span>(final_url) </span>
+<span id="cb8-11"><a></a>  resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
+<span id="cb8-12"><a></a></span>
+<span id="cb8-13"><a></a>  <span class="co"># if request is not successful</span></span>
+<span id="cb8-14"><a></a>  <span class="cf">if</span> (<span class="fu">resp_status</span>(resp) <span class="sc">!=</span> <span class="dv">200</span>){</span>
+<span id="cb8-15"><a></a>    <span class="fu">message</span>(<span class="st">"The request was not successful"</span>)</span>
+<span id="cb8-16"><a></a>  }</span>
+<span id="cb8-17"><a></a>  <span class="cf">else</span>{</span>
+<span id="cb8-18"><a></a>    <span class="fu">return</span>(<span class="fu">resp_body_json</span>(resp))</span>
+<span id="cb8-19"><a></a>  }</span>
+<span id="cb8-20"><a></a>}</span>
+<span id="cb8-21"><a></a></span>
+<span id="cb8-22"><a></a><span class="fu">get_case_counts</span>(<span class="st">"CH"</span>, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-4-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "LISN.SW"</code></pre>
+<pre><code>$country
+[1] "Switzerland"
+
+$province
+$province[[1]]
+[1] "mainland"
+
+
+$timeline
+$timeline$cases
+$timeline$cases$`3/5/23`
+[1] 4412439
+
+$timeline$cases$`3/6/23`
+[1] 4412439
+
+$timeline$cases$`3/7/23`
+[1] 4413911
+
+$timeline$cases$`3/8/23`
+[1] 4413911
+
+$timeline$cases$`3/9/23`
+[1] 4413911
+
+
+$timeline$deaths
+$timeline$deaths$`3/5/23`
+[1] 14207
+
+$timeline$deaths$`3/6/23`
+[1] 14207
+
+$timeline$deaths$`3/7/23`
+[1] 14207
+
+$timeline$deaths$`3/8/23`
+[1] 14209
+
+$timeline$deaths$`3/9/23`
+[1] 14210
+
+
+$timeline$recovered
+$timeline$recovered$`3/5/23`
+[1] 0
+
+$timeline$recovered$`3/6/23`
+[1] 0
+
+$timeline$recovered$`3/7/23`
+[1] 0
+
+$timeline$recovered$`3/8/23`
+[1] 0
+
+$timeline$recovered$`3/9/23`
+[1] 0</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>           LISN.SW.Open LISN.SW.High LISN.SW.Low LISN.SW.Close LISN.SW.Volume
-2025-08-25       117200       119400      117200        117400             85
-2025-08-26       117000       119400      117000        118200            246
-2025-08-27       117400       119200      117400        118600             89
-2025-08-28       119200       119400      117600        119000            107
-2025-08-29       119000       119800      118200        119800             95
-2025-09-01       119400       120600      119400        120200             79
-           LISN.SW.Adjusted
-2025-08-25           117400
-2025-08-26           118200
-2025-08-27           118600
-2025-08-28           119000
-2025-08-29           119800
-2025-09-01           120200</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-4-3">
+</div>
+</section>
+<section id="get-vaccine-rates" class="slide level2 smaller">
+<h2>GET Vaccine Rates</h2>
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Code</a></li><li><a href="#tabset-5-2">Data</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">library</span>(httr2)</span>
+<span id="cb10-2"><a></a></span>
+<span id="cb10-3"><a></a>get_country_vaccine_rates <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">country =</span> <span class="st">"CH"</span>, <span class="at">period =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">365</span>, <span class="st">"all"</span>)){</span>
+<span id="cb10-4"><a></a>  <span class="co"># https://disease.sh/v3/covid-19/vaccine/coverage/countries/CH?lastdays=30&amp;fullData=false</span></span>
+<span id="cb10-5"><a></a>  <span class="co"># this way is error prone, try to match.args to check if the inputs are correct</span></span>
+<span id="cb10-6"><a></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://disease.sh/v3/covid-19/vaccine/coverage/countries"</span></span>
+<span id="cb10-7"><a></a>  final_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(base_url, <span class="st">"/"</span>, country, <span class="st">"?lastdays="</span>, period, <span class="st">"&amp;fullData=false"</span>)</span>
+<span id="cb10-8"><a></a></span>
+<span id="cb10-9"><a></a>  <span class="co"># perform  API call with httr2</span></span>
+<span id="cb10-10"><a></a>  req <span class="ot">&lt;-</span> <span class="fu">request</span>(final_url) </span>
+<span id="cb10-11"><a></a>  resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
+<span id="cb10-12"><a></a></span>
+<span id="cb10-13"><a></a>  <span class="co"># if request is not successful</span></span>
+<span id="cb10-14"><a></a>  <span class="cf">if</span> (<span class="fu">resp_status</span>(resp) <span class="sc">!=</span> <span class="dv">200</span>){</span>
+<span id="cb10-15"><a></a>    <span class="fu">message</span>(<span class="st">"The request was not successful"</span>)</span>
+<span id="cb10-16"><a></a>  }</span>
+<span id="cb10-17"><a></a>  <span class="cf">else</span>{</span>
+<span id="cb10-18"><a></a>    <span class="fu">return</span>(<span class="fu">resp_body_json</span>(resp))</span>
+<span id="cb10-19"><a></a>  }</span>
+<span id="cb10-20"><a></a>}</span>
+<span id="cb10-21"><a></a></span>
+<span id="cb10-22"><a></a><span class="fu">get_country_vaccine_rates</span>(<span class="st">"CH"</span>, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-5-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "LISN.SW"</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="presentation_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
-</figure>
-</div>
+<pre><code>$country
+[1] "Switzerland"
+
+$timeline
+$timeline$`7/17/25`
+[1] 16940716
+
+$timeline$`7/18/25`
+[1] 16940716
+
+$timeline$`7/19/25`
+[1] 16940716
+
+$timeline$`7/20/25`
+[1] 16940716
+
+$timeline$`7/21/25`
+[1] 16940716</code></pre>
 </div>
 </div>
 </div>
@@ -683,28 +900,8 @@ Minna Heim
 <li>the <a href="https://pypi.org/project/fredapi/">fredapi</a> Python Library (for US economic data)</li>
 <li>the <a href="https://sboysel.github.io/fredr/">fredr</a> data from the Federal Reserve Economic Data (FRED) API R package</li>
 </ul>
-</section></section>
-<section>
-<section id="why-apis" class="title-slide slide level1 center">
-<h1>Why APIs?</h1>
-
 </section>
-<section id="why-apis-1" class="slide level2">
-<h2>Why APIs?</h2>
-<!-- maybe by now, you have some ideas as to why API's are useful... -->
-<ul>
-<li>automation</li>
-<li>easier to fetch specific data (specify time, specific indicators)</li>
-<li>real time data</li>
-<li>API usage (often) so much easier than scraping &amp; downloading &amp; reading &amp; cleaning!! (all-in-1)</li>
-</ul>
-</section></section>
-<section>
-<section id="lets-move-on-to-the-exercises" class="title-slide slide level1 center">
-<h1>Let’s move on to the exercises</h1>
-
-</section>
-<section id="thank-you-for-your-attention" class="slide level2">
+<section id="thank-you-for-your-attention" class="slide level2 smaller">
 <h2>Thank you for your attention!</h2>
 <p>If you are interested in working with us or if you have any questions:</p>
 <ul>
