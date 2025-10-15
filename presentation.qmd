@@ -73,7 +73,7 @@ plot
 - build your own mini wrapper
 - learn to identify and understand the use of APIs in real-world contexts 
 
-# Let's say, you want to construct your own Economic Index 
+# Construct your own Economic Index 
 <!-- TODO: put this into one slide, with subset? -->
 
 <!-- 
@@ -100,75 +100,76 @@ plot
 ![](img/downloaded.png){fig-align="center"}
 <!-- it looks like this because this is for non-technical people, and because its nice to look at -->
 
-## Import Data {.smaller}
+## Import & Clean Data {.smaller}
 <!-- TODO: do this with the current example -->
 
 ::: {.panel-tabset}
 
-### Code 
+### Code
 ```r 
-library(readr)
-library(lubridate)
-# Read all lines as a single column
-raw_data <- readLines("lisn-sw.txt")
+library(readxl)
+data <- read_xlsx("examples/je-d-04.02.01.03.xlsx") 
 
-# The first 7 lines are headers
-headers <- raw_data[1:7]
-# the rest is the actual data
-data_lines <- raw_data[-(1:7)]
+# subset only the rows 3 (= year) and 9 (= gdp)
+gdp <- data[9,]
+names(gdp) <- data[3,]
 
-# set the column and row lengths
-n_cols <- length(headers)
-n_rows <- length(data_lines) / n_cols
+# pivot data longer (from excel wide format to data frame long format)
+gdp_long <- gdp |>
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = "Year",
+    values_to = "GDP"
+  )
 
-# Create matrix and convert to data frame
-data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
-data <- as.data.frame(data_matrix)
-colnames(data) <- headers
+# remove old headers 
+gdp_long <- gdp_long[-c(1:2),]
 
-# convert columns to correct formats using lubridate
-data$Date <- mdy(data$Date)
-# remove commas and convert to numeric
-data[, -1] <- lapply(data[, -1], parse_number)
+# check structure
+# str(gdp_long)
 
-head(data)
+# convert to gdp numeric and year to year
+gdp_long$GDP <- as.numeric(gdp_long$GDP)
+gdp_long$Year <- as.integer(gdp_long$Year)
+
+head(gdp_long, n=10)
 ```
 
 ### Data
 ```{r import data}
-library(readr)
-library(lubridate)
+#### import gdp data manually
+library(readxl)
 
-# Read all lines as a single column
+data <- read_xlsx("examples/je-d-04.02.01.03.xlsx") 
 
-raw_data <- readLines("examples/lisn-sw.txt")
+# inspect data
+# head(data)
+# View(data)
 
-# The first 7 lines are headers
-headers <- raw_data[1:7]
+# subset only the rows 3 (= year) and 9 (= gdp)
+gdp <- data[9,]
+names(gdp) <- data[3,]
 
-data_lines <- raw_data[-(1:7)]
+# pivot data longer (from excel wide format to data frame long format)
+gdp_long <- gdp |>
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = "Year",
+    values_to = "GDP"
+  )
 
-# set the column and row lengths
-n_cols <- length(headers)
-n_rows <- length(data_lines) / n_cols
+# remove old headers 
+gdp_long <- gdp_long[-c(1:2),]
 
-# Create matrix and convert to data frame
-data_matrix <- matrix(data_lines, nrow = n_rows, ncol = n_cols, byrow = TRUE)
-data <- as.data.frame(data_matrix)
-colnames(data) <- headers
+# check structure
+# str(gdp_long)
 
+# convert to gdp numeric and year to year
+gdp_long$GDP <- as.numeric(gdp_long$GDP)
+gdp_long$Year <- as.integer(gdp_long$Year)
 
-# convert columns to correct formats
-data$Date <- mdy(data$Date)
+head(gdp_long, n=10)
 
-# cannot transform the other columns to numeric directly since the numbers are in the format: "123,456.78", aka the "," is not understood by functions like as.numeric().
-
-# remove commas and convert to numeric
-data[, -1] <- lapply(data[, -1], parse_number)
-# str(data)
-
-
-head(data, n = 12)
 ```
 
 :::
@@ -177,14 +178,14 @@ head(data, n = 12)
 
 
 
-## APIs 
-<!-- TODO: design your own diagram based on example -->
-![](/img/api_diagram_example.png){fig-align="center" width=80%}
+## APIs Conceptually
+<!-- TODO: why not centered when using quarto? -->
+<img src="/img/api_diagram_example.png"  style="display:block; margin:0 auto; width:70%;">
 <!-- explain: GET POST PUT DELETE  -->
-<!-- add: params, call it endpoints, request & response & wrapper -->
-<!-- adapt example to BFS example -->
+
 
 ## API wrappers 
+<!-- API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
 ![](/img/api_wrapper_example.png){fig-align="center"}
 
 ## Use the BFS API Wrapper for R {.smaller}
@@ -202,13 +203,16 @@ dataset_nr <- "px-x-0204000000_106"
 energy_df <- bfs_get_data(dataset_nr, lang = "en")
 
 # filter only total energy accounts
-total_energy <- energy_df |>
-  # get only total for each category
-  filter(`Economy and households` == "Economy and households - Total") |>
-  filter(`Energy product` == "Energy product - Total") |>
-  # rename Energy accounts of economy and households to amount
-  select(Year, Amount = `Energy accounts of economy and households`)
+total_energy <- subset(
+  energy_df,
+  # filter for totals for each of the columns 
+  `Economy and households` == "Economy and households - Total" &
+  `Energy product` == "Energy product - Total",
+  # select only the two relevant columns
+  select = c(Year, `Energy accounts of economy and households`)
+)
 
+names(total_energy)[2] <- "Amount"
 
 # View(total_energy)
 head(total_energy, n=10)
@@ -243,30 +247,33 @@ dataset_nr <- "px-x-0204000000_106"
 energy_df <- bfs_get_data(dataset_nr, lang = "en")
 
 # filter only total energy accounts
-total_energy <- energy_df |>
-  # get only total for each category
-  filter(`Economy and households` == "Economy and households - Total") |>
-  filter(`Energy product` == "Energy product - Total") |>
-  # rename Energy accounts of economy and households to amount
-  select(Year, Amount = `Energy accounts of economy and households`)
+total_energy <- subset(
+  energy_df,
+  # filter for totals for each of the columns 
+  `Economy and households` == "Economy and households - Total" &
+  `Energy product` == "Energy product - Total",
+  # select only the two relevant columns
+  select = c(Year, `Energy accounts of economy and households`)
+)
 
+names(total_energy)[2] <- "Amount"
+
+# View(total_energy)
 head(total_energy, n=10)
 ```
 
 :::
 
-## How the BFS API looks like
-- here i am unsure on how to proceed: give them homework (go through package)
-- or show them myself
+# BFS API - under the hood
+
 
 ##
 ![](img/bfs-code.png){fig-align="center"}
 
-## Let's review this
+## Let's take a closer look {.smaller}
 
 ```r
 bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
-  language <- match.arg(arg = language, choices = c("de", "fr", "it", "en"))
   # parameters can be seen here
   pxweb_api_url <- paste0("https://www.pxweb.bfs.admin.ch/api/v1/", language, "/", number_bfs, "/", number_bfs, ".px")
   # if too many requests HTTP 429
@@ -293,19 +300,6 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
 :::
 <!-- show cURL, etc. of using API -->
 
-
-# Let's try to build our own API wrapper 
-
-## Other examples of API wrappers for economic data
-
-- the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
-- the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
-- the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
-- the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
-
-
-# Why APIs?
-
 ## Why APIs?
 
 <!-- maybe by now, you have some ideas as to why API's are useful... -->
@@ -314,11 +308,165 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
 - easier to fetch specific data (specify time, specific indicators)
 - real time data
 - API usage (often) so much easier than scraping & downloading & reading & cleaning!! (all-in-1)
+- used everywhere!
 
-# Let's move on to the exercises
+
+# Exercises: Build your own API wrapper 
+
+## httr2 cheatsheet {.smaller}
+
+| Category | Function | Description |
+|-----------|-----------|-------------|
+| **Request** | `request()` | Creates a new HTTP request object that defines the endpoint and method (e.g., GET, POST). |
+| **Request** | `req_perform()` | Sends the built request to the server and *returns the response object*. |
+| **Response** | `resp_body_json()` | Parses the response body as JSON and returns it as an R list. |
+| **Response** | `resp_status()` | Retrieves the HTTP status from the response object. |
+
+: {tbl-colwidths="[25,25,50]"}
 
 
-## Thank you for your attention! 
+
+## COVID 19 API
+- building our Economic Index
+- for the time during and post covid
+- for this, get vaccination and COVID 19 case rates (incl. death & recovery)
+
+## 
+![](/img/swagger_overview.png){fig-align="center"}
+
+## 
+![](/img/historical_endpoint.png){fig-align="center"}
+
+##
+![](/img/try_out_endpoint.png){fig-align="center"}
+
+
+## GET COVID Case Counts {.smaller}
+
+::: {.panel-tabset}
+
+###  Code 
+```r
+library(httr2)
+
+get_case_counts <- function(country = "CH", period = c(30,365, "all")){
+  # "https://disease.sh/v3/covid-19/historical/CH?lastdays=30"
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/historical"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period)
+
+  # perform API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+get_case_counts("CH", 5)
+```
+### Data 
+
+```{r covid wrapper}
+library(httr2)
+
+get_case_counts <- function(country = "CH", period = c(30,365, "all")){
+  # "https://disease.sh/v3/covid-19/historical/CH?lastdays=30"
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/historical"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period)
+
+  # perform API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+get_case_counts("CH", 5)
+```
+
+
+:::
+## GET Vaccine Rates {.smaller}
+
+::: {.panel-tabset}
+
+### Code 
+
+```r
+library(httr2)
+
+get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all")){
+  # https://disease.sh/v3/covid-19/vaccine/coverage/countries/CH?lastdays=30&fullData=false
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/vaccine/coverage/countries"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period, "&fullData=false")
+
+  # perform  API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+get_country_vaccine_rates("CH", 5)
+```
+
+### Data
+
+```{r}
+library(httr2)
+
+get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all")){
+  # https://disease.sh/v3/covid-19/vaccine/coverage/countries/CH?lastdays=30&fullData=false
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/vaccine/coverage/countries"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period, "&fullData=false")
+
+  # perform  API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+get_country_vaccine_rates("CH", 5)
+```
+
+:::
+
+## Other examples of API wrappers for economic data
+
+- the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
+- the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
+- the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
+- the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
+
+## Thank you for your attention! {.smaller}
 If you are interested in working with us or if you have any questions: 
 
 - source code: [https://github.com/minnaheim/dh_guest_lecture_2025](https://github.com/minnaheim/dh_guest_lecture_2025)
