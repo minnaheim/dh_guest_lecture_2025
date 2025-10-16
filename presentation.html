@@ -406,7 +406,7 @@ Minna Heim
 
 <section id="how-do-we-get-the-data-for-this-plot" class="slide level2 smaller">
 <h2>How do we get the data for this Plot?</h2>
-<!-- TODO: how do we reconstruct it? aka create our own index -->
+<!-- Speaker Notes: We want to reconstruct this, create our own Index -->
 
 <img data-src="presentation_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"></section>
 <section id="about-me" class="slide level2">
@@ -416,8 +416,7 @@ Minna Heim
 <li>Doing a Master in Data Science &amp; minor in Economics at UZH</li>
 <li>Working at KOF-ETH</li>
 </ul>
-<!-- 
-- work in the institute that produces the data i just showed you -->
+<!-- Speaker Notes: I work in the institute that produces the data i just showed you -->
 </section>
 <section id="about-the-institute-and-my-work" class="slide level2">
 <h2>About the institute and my work</h2>
@@ -436,22 +435,18 @@ Minna Heim
 <section id="what-will-you-know-by-the-end-of-this-lecture" class="slide level2">
 <h2>What will you know by the end of this lecture?</h2>
 <ul>
-<li>gain a better understanding of how APIs are used <!-- TODO: scope to be determined --></li>
+<li>gain a better understanding of how APIs are used</li>
 <li>build your own mini wrapper</li>
 <li>learn to identify and understand the use of APIs in real-world contexts</li>
 </ul>
 </section>
 <section id="construct-your-own-economic-index" class="title-slide slide level1 center">
 <h1>Construct your own Economic Index</h1>
-<!-- TODO: put this into one slide, with subset? -->
 <!-- 
-- let's say we want to get the stock prices of lindt & sprüngli for the last month
-- how do we get data from the internet (let's say you don't have the .csv file on your computer)
-- we would go to the internet, get the data from the Tabelle from the website 
-- highlight the table we want, how do we get this data?
-- copy paste into a .csv file, then import
-- clean, etc. 
-- what if you want to do this more often? -> umständlich! 
+Speaker Notes:
+- what kind of data do you need to construct your own index that best represents Swiss Economic Activity
+- you need: gdp, energy consumption, demographic information, swiss market index (smi), etc. 
+- how would you get all of this data?
 -->
 </section>
 
@@ -474,11 +469,13 @@ Minna Heim
 <img data-src="img/search.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="section-3" class="slide level2">
 <h2></h2>
-<p><img data-src="img/downloaded.png" class="quarto-figure quarto-figure-center"> <!-- it looks like this because this is for non-technical people, and because its nice to look at --></p>
+<p><img data-src="img/downloaded.png" class="quarto-figure quarto-figure-center"> <!-- Speaker Notes: it looks like this because this is for non-technical people (who use excel), and because its nice to look at --></p>
 </section>
 <section id="import-clean-data" class="slide level2 smaller">
 <h2>Import &amp; Clean Data</h2>
-<!-- TODO: do this with the current example -->
+<!-- Speaker Notes:  
+now that we have downloaded the data, we need to import and clean it, so we can use it for analysis
+-->
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Code</a></li><li><a href="#tabset-1-2">Data</a></li></ul>
 <div class="tab-content">
@@ -535,47 +532,77 @@ Minna Heim
 <section>
 <section id="api-wrapper-way" class="title-slide slide level1 center">
 <h1>API (wrapper) way</h1>
+<!-- 
+Speaker Notes:
+  API = standardising the way in which your computer talks to another computer (=server)
+  somehow, we need to tell the other computer where we want to go, and what we want to get, this is done with this link:
 
+  Restaurant Analogy: 
+  - API = Waiter 
+  - Server = Kitchen 
+  - Menu = API Documentation (see endpoints & param)
+  - Client = You
+  - Order = API call
+  - HTTP request 
+      GET = get food (param = add onions), 
+      POST = send back, 
+      PUT = modify something about your food (once it is already out)
+  - Food = Response (Json, e.g. )
+
+ -->
 </section>
-<section id="apis-conceptually" class="slide level2">
-<h2>APIs Conceptually</h2>
-<!-- TODO: why not centered when using quarto? -->
-<p><img src="./img/api_diagram_example.png" style="display:block; margin:0 auto; width:70%;"> <!-- explain: GET POST PUT DELETE  --></p>
+<section id="api-conceptually" class="slide level2">
+<h2>API Conceptually</h2>
+<!-- Speaker Notes:
+  translate from analogy to diagram 
+   -->
+
+<img data-src="./img/api_diagram_w_url.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="api-example" class="slide level2">
+<h2>API Example</h2>
+<p><img src="./img/api_example_link.png" style="display:block; margin:0 auto; width:90%;"> <!-- 
+Speaker Notes: 
+when explaining this, encourage students to try out the link themselves -> how many IDs do we get when we use "poodle"
+--></p>
 </section>
-<section id="api-wrappers" class="slide level2">
+<section id="api-wrappers" class="slide level2 smaller">
 <h2>API wrappers</h2>
-<!-- API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
+<!-- 
+Speaker Notes:
+API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
 
-<img data-src="./img/api_wrapper_example.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<img data-src="./img/api_wrapper_met.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="use-the-bfs-api-wrapper-for-r" class="slide level2 smaller">
 <h2>Use the BFS API Wrapper for R</h2>
-<!-- this is the most frequent way which you will encounter APIs, wrapped -->
+<!-- 
+Speaker Notes:
+this is the most frequent way which you will encounter APIs, wrapped 
+-->
 <div class="panel-tabset">
 <ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">code</a></li><li><a href="#tabset-2-2">output 1</a></li><li><a href="#tabset-2-3">output 2</a></li><li><a href="#tabset-2-4">output 3</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
 <div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># devtools::install_github("lgnbhl/BFS")</span></span>
 <span id="cb3-2"><a></a><span class="fu">library</span>(BFS)</span>
-<span id="cb3-3"><a></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb3-4"><a></a></span>
-<span id="cb3-5"><a></a><span class="fu">bfs_get_catalog_data</span>(<span class="at">language =</span> <span class="st">"en"</span>, <span class="at">title =</span> <span class="st">"energy"</span>)</span>
-<span id="cb3-6"><a></a>dataset_nr <span class="ot">&lt;-</span> <span class="st">"px-x-0204000000_106"</span></span>
-<span id="cb3-7"><a></a>energy_df <span class="ot">&lt;-</span> <span class="fu">bfs_get_data</span>(dataset_nr, <span class="at">lang =</span> <span class="st">"en"</span>)</span>
-<span id="cb3-8"><a></a></span>
-<span id="cb3-9"><a></a><span class="co"># filter only total energy accounts</span></span>
-<span id="cb3-10"><a></a>total_energy <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
-<span id="cb3-11"><a></a>  energy_df,</span>
-<span id="cb3-12"><a></a>  <span class="co"># filter for totals for each of the columns </span></span>
-<span id="cb3-13"><a></a>  <span class="st">`</span><span class="at">Economy and households</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Economy and households - Total"</span> <span class="sc">&amp;</span></span>
-<span id="cb3-14"><a></a>  <span class="st">`</span><span class="at">Energy product</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Energy product - Total"</span>,</span>
-<span id="cb3-15"><a></a>  <span class="co"># select only the two relevant columns</span></span>
-<span id="cb3-16"><a></a>  <span class="at">select =</span> <span class="fu">c</span>(Year, <span class="st">`</span><span class="at">Energy accounts of economy and households</span><span class="st">`</span>)</span>
-<span id="cb3-17"><a></a>)</span>
-<span id="cb3-18"><a></a></span>
-<span id="cb3-19"><a></a><span class="fu">names</span>(total_energy)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Amount"</span></span>
-<span id="cb3-20"><a></a></span>
-<span id="cb3-21"><a></a><span class="co"># View(total_energy)</span></span>
-<span id="cb3-22"><a></a><span class="fu">head</span>(total_energy, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a></a></span>
+<span id="cb3-4"><a></a><span class="fu">bfs_get_catalog_data</span>(<span class="at">language =</span> <span class="st">"en"</span>, <span class="at">title =</span> <span class="st">"energy"</span>)</span>
+<span id="cb3-5"><a></a>dataset_nr <span class="ot">&lt;-</span> <span class="st">"px-x-0204000000_106"</span></span>
+<span id="cb3-6"><a></a>energy_df <span class="ot">&lt;-</span> <span class="fu">bfs_get_data</span>(dataset_nr, <span class="at">lang =</span> <span class="st">"en"</span>)</span>
+<span id="cb3-7"><a></a></span>
+<span id="cb3-8"><a></a><span class="co"># filter only total energy accounts</span></span>
+<span id="cb3-9"><a></a>total_energy <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb3-10"><a></a>  energy_df,</span>
+<span id="cb3-11"><a></a>  <span class="co"># filter for totals for each of the columns </span></span>
+<span id="cb3-12"><a></a>  <span class="st">`</span><span class="at">Economy and households</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Economy and households - Total"</span> <span class="sc">&amp;</span></span>
+<span id="cb3-13"><a></a>  <span class="st">`</span><span class="at">Energy product</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Energy product - Total"</span>,</span>
+<span id="cb3-14"><a></a>  <span class="co"># select only the two relevant columns</span></span>
+<span id="cb3-15"><a></a>  <span class="at">select =</span> <span class="fu">c</span>(Year, <span class="st">`</span><span class="at">Energy accounts of economy and households</span><span class="st">`</span>)</span>
+<span id="cb3-16"><a></a>)</span>
+<span id="cb3-17"><a></a></span>
+<span id="cb3-18"><a></a><span class="fu">names</span>(total_energy)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Amount"</span></span>
+<span id="cb3-19"><a></a></span>
+<span id="cb3-20"><a></a><span class="co"># View(total_energy)</span></span>
+<span id="cb3-21"><a></a><span class="fu">head</span>(total_energy, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-2-2">
 <div class="cell">
@@ -628,27 +655,35 @@ Minna Heim
 <section>
 <section id="bfs-api---under-the-hood" class="title-slide slide level1 center">
 <h1>BFS API - under the hood</h1>
-
+<!-- Speaker Notes:
+one way in which we know how the BFS API works, 
+other than just going to the BFS API website, is to check out the github repository where the api wrapper is written - we see the functions we previously used in action
+-->
 </section>
 <section id="section-4" class="slide level2">
 <h2></h2>
+<!-- 
+Speaker Notes:
+  looks complicated, let's look at it more closely -->
 
-<img data-src="img/bfs-code.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<img data-src="img/bfs_get_data.png" class="quarto-figure quarto-figure-center r-stretch"></section>
 <section id="lets-take-a-closer-look" class="slide level2 smaller">
 <h2>Let’s take a closer look</h2>
+<!-- Speaker Notes:
+  let's go through this like by line: 
+  we have the base url, the endpoints (no params here?)
+  then perform, and specify how to get the response
+ -->
 <div class="sourceCode" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>bfs_get_data <span class="ot">&lt;-</span> <span class="cf">function</span>(number_bfs, <span class="at">language =</span> <span class="st">"de"</span>, <span class="at">query =</span> <span class="cn">NULL</span>, <span class="at">column_name_type =</span> <span class="st">"text"</span>, <span class="at">variable_value_type =</span> <span class="st">"text"</span>, <span class="at">clean_names =</span> <span class="cn">FALSE</span>, <span class="at">delay =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb7-2"><a></a>  <span class="co"># parameters can be seen here</span></span>
-<span id="cb7-3"><a></a>  pxweb_api_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://www.pxweb.bfs.admin.ch/api/v1/"</span>, language, <span class="st">"/"</span>, number_bfs, <span class="st">"/"</span>, number_bfs, <span class="st">".px"</span>)</span>
-<span id="cb7-4"><a></a>  <span class="co"># if too many requests HTTP 429</span></span>
-<span id="cb7-5"><a></a>  <span class="co"># base url</span></span>
-<span id="cb7-6"><a></a>  df_json <span class="ot">&lt;-</span> httr2<span class="sc">::</span><span class="fu">request</span>(<span class="st">"https://www.pxweb.bfs.admin.ch/api/v1"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a></a>    <span class="co"># add parameters</span></span>
-<span id="cb7-8"><a></a>    httr2<span class="sc">::</span><span class="fu">req_url_path_append</span>(<span class="fu">paste0</span>(language, <span class="st">"/"</span>, number_bfs, <span class="st">"/"</span>, number_bfs, <span class="st">".px"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-9"><a></a>    httr2<span class="sc">::</span><span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">2</span>, <span class="at">max_seconds =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-10"><a></a>    <span class="co"># executre request</span></span>
-<span id="cb7-11"><a></a>    httr2<span class="sc">::</span><span class="fu">req_perform</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb7-12"><a></a>    <span class="co"># transform response to json</span></span>
-<span id="cb7-13"><a></a>    httr2<span class="sc">::</span><span class="fu">resp_body_json</span>(<span class="at">simplifyVector =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a></a>  <span class="co"># base url</span></span>
+<span id="cb7-3"><a></a>  df_json <span class="ot">&lt;-</span> httr2<span class="sc">::</span><span class="fu">request</span>(<span class="st">"https://www.pxweb.bfs.admin.ch/api/v1"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a></a>    <span class="co"># add parameters</span></span>
+<span id="cb7-5"><a></a>    httr2<span class="sc">::</span><span class="fu">req_url_path_append</span>(<span class="fu">paste0</span>(language, <span class="st">"/"</span>, number_bfs, <span class="st">"/"</span>, number_bfs, <span class="st">".px"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a></a>    httr2<span class="sc">::</span><span class="fu">req_retry</span>(<span class="at">max_tries =</span> <span class="dv">2</span>, <span class="at">max_seconds =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a></a>    <span class="co"># executre request</span></span>
+<span id="cb7-8"><a></a>    httr2<span class="sc">::</span><span class="fu">req_perform</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a></a>    <span class="co"># transform response to json</span></span>
+<span id="cb7-10"><a></a>    httr2<span class="sc">::</span><span class="fu">resp_body_json</span>(<span class="at">simplifyVector =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="lets-try-it-out" class="slide level2 smaller">
 <h2>Let’s try it out</h2>
@@ -659,7 +694,7 @@ Minna Heim
 <p><img data-src="img/browser.png"></p>
 </div>
 <div id="tabset-3-2">
-
+<!-- TODO: get cURL -->
 </div>
 </div>
 </div>
@@ -667,7 +702,9 @@ Minna Heim
 </section>
 <section id="why-apis" class="slide level2">
 <h2>Why APIs?</h2>
-<!-- maybe by now, you have some ideas as to why API's are useful... -->
+<!-- 
+Speaker Notes:
+maybe by now, you have some ideas as to why API's are useful... -->
 <ul>
 <li>automation</li>
 <li>easier to fetch specific data (specify time, specific indicators)</li>
@@ -683,6 +720,10 @@ Minna Heim
 </section>
 <section id="httr2-cheatsheet" class="slide level2 smaller">
 <h2>httr2 cheatsheet</h2>
+<!-- 
+Speaker Notes:
+these are the most important functions in httr2, and how they translate to the diagram we saw above
+ -->
 <table class="caption-top">
 <colgroup>
 <col style="width: 25%">
@@ -892,13 +933,14 @@ $timeline$`7/21/25`
 </div>
 </div>
 </section>
-<section id="other-examples-of-api-wrappers-for-economic-data" class="slide level2">
-<h2>Other examples of API wrappers for economic data</h2>
+<section id="other-examples-of-apis-api-wrappers-for-economic-data" class="slide level2 smaller">
+<h2>Other examples of APIs &amp; API wrappers for economic data</h2>
 <ul>
 <li>the <a href="https://www.rdocumentation.org/packages/kofdata/versions/0.2.1">kofdata</a> R Package (for KOF data)</li>
 <li>the <a href="https://felixluginbuhl.com/BFS/">BFS</a> R package (for Swiss federal statistics)</li>
 <li>the <a href="https://pypi.org/project/fredapi/">fredapi</a> Python Library (for US economic data)</li>
 <li>the <a href="https://sboysel.github.io/fredr/">fredr</a> data from the Federal Reserve Economic Data (FRED) API R package</li>
+<li><a href="https://github.com/public-apis/public-apis">public-apis</a> a Github repository listing Public APIs</li>
 </ul>
 </section>
 <section id="thank-you-for-your-attention" class="slide level2 smaller">
