@@ -506,6 +506,7 @@ get_country_vaccine_rates("CH", 5)
 - the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
 - [public-apis](https://github.com/public-apis/public-apis) a Github repository listing Public APIs
 
+
 ## Thank you for your attention! {.smaller}
 If you are interested in working with us or if you have any questions: 
 

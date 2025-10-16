@@ -4,3 +4,4 @@
 /.quarto/
 /_site
 .httr-oauth
+.Rproj.user
