@@ -15,13 +15,14 @@ devtools::install_github("KOF-ch/kofdata")
 ```
 
 
-<!-- 
+<!-- Speaker Notes:
 - not more than 2-3 min
 - you've probably heard of APIs already
 - teaser: this is what you could do with an API (not the plotting, but getting data), and so much more  -->
 
 ## How do we get the data for this Plot?{.smaller}
-<!-- TODO: how do we reconstruct it? aka create our own index -->
+
+<!-- Speaker Notes: We want to reconstruct this, create our own Index -->
 
 ```{r, echo=FALSE,results='hide',fig.keep='all'}
 # install.packages("quantmod")
@@ -47,11 +48,9 @@ plot
 - Doing a Master in Data Science & minor in Economics at UZH
 - Working at KOF-ETH
 
-<!-- 
-- work in the institute that produces the data i just showed you -->
+<!-- Speaker Notes: I work in the institute that produces the data i just showed you -->
 
 ## About the institute and my work
-
 
 :::: {.columns}
 ::: {.column width="40%"}
@@ -69,21 +68,15 @@ plot
 
 ## What will you know by the end of this lecture?
 - gain a better understanding of how APIs are used
-<!-- TODO: scope to be determined -->
 - build your own mini wrapper
 - learn to identify and understand the use of APIs in real-world contexts 
 
 # Construct your own Economic Index 
-<!-- TODO: put this into one slide, with subset? -->
-
 <!-- 
-- let's say we want to get the stock prices of lindt & sprüngli for the last month
-- how do we get data from the internet (let's say you don't have the .csv file on your computer)
-- we would go to the internet, get the data from the Tabelle from the website 
-- highlight the table we want, how do we get this data?
-- copy paste into a .csv file, then import
-- clean, etc. 
-- what if you want to do this more often? -> umständlich! 
+Speaker Notes:
+- what kind of data do you need to construct your own index that best represents Swiss Economic Activity
+- you need: gdp, energy consumption, demographic information, swiss market index (smi), etc. 
+- how would you get all of this data?
 -->
 # Human Way
 
@@ -98,10 +91,12 @@ plot
 
 ## 
 ![](img/downloaded.png){fig-align="center"}
-<!-- it looks like this because this is for non-technical people, and because its nice to look at -->
+<!-- Speaker Notes: it looks like this because this is for non-technical people (who use excel), and because its nice to look at -->
 
 ## Import & Clean Data {.smaller}
-<!-- TODO: do this with the current example -->
+<!-- Speaker Notes:  
+now that we have downloaded the data, we need to import and clean it, so we can use it for analysis
+-->
 
 ::: {.panel-tabset}
 
@@ -175,28 +170,58 @@ head(gdp_long, n=10)
 :::
 
 # API (wrapper) way
+<!-- 
+Speaker Notes:
+  API = standardising the way in which your computer talks to another computer (=server)
+  somehow, we need to tell the other computer where we want to go, and what we want to get, this is done with this link:
+
+  Restaurant Analogy: 
+  - API = Waiter 
+  - Server = Kitchen 
+  - Menu = API Documentation (see endpoints & param)
+  - Client = You
+  - Order = API call
+  - HTTP request 
+      GET = get food (param = add onions), 
+      POST = send back, 
+      PUT = modify something about your food (once it is already out)
+  - Food = Response (Json, e.g. )
+
+ -->
 
 
+## API Conceptually
+<!-- Speaker Notes:
+  translate from analogy to diagram 
+   -->
+![](/img/api_diagram_w_url.png){fig-align="center"}
 
-## APIs Conceptually
-<!-- TODO: why not centered when using quarto? -->
-<img src="/img/api_diagram_example.png"  style="display:block; margin:0 auto; width:70%;">
-<!-- explain: GET POST PUT DELETE  -->
+## API Example 
+<img src="/img/api_example_link.png"  style="display:block; margin:0 auto; width:90%;">
+<!-- 
+Speaker Notes: 
+when explaining this, encourage students to try out the link themselves -> how many IDs do we get when we use "poodle"
+-->
 
+## API wrappers {.smaller}
+<!-- 
+Speaker Notes:
+API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
 
-## API wrappers 
-<!-- API wrappers: simple program wraps the process of using the interface through dynamic URLs into a parameterized function -->
-![](/img/api_wrapper_example.png){fig-align="center"}
+![](/img/api_wrapper_met.png){fig-align="center"}
+
 
 ## Use the BFS API Wrapper for R {.smaller}
-<!-- this is the most frequent way which you will encounter APIs, wrapped -->
+<!-- 
+Speaker Notes:
+this is the most frequent way which you will encounter APIs, wrapped 
+-->
 ::: {.panel-tabset}
 
 ### code 
 ```r
 # devtools::install_github("lgnbhl/BFS")
 library(BFS)
-library(tidyverse)
 
 bfs_get_catalog_data(language = "en", title = "energy")
 dataset_nr <- "px-x-0204000000_106"
@@ -239,7 +264,6 @@ head(energy_df)
 ### output 3
 ```{r bfs api wrapper tidyverse}
 # devtools::install_github("lgnbhl/BFS")
-library(tidyverse)
 library(BFS)
 
 # bfs_get_catalog_data(language = "en", title = "energy")
@@ -265,18 +289,27 @@ head(total_energy, n=10)
 :::
 
 # BFS API - under the hood
-
+<!-- Speaker Notes:
+one way in which we know how the BFS API works, 
+other than just going to the BFS API website, is to check out the github repository where the api wrapper is written - we see the functions we previously used in action
+-->
 
 ##
-![](img/bfs-code.png){fig-align="center"}
+<!-- 
+Speaker Notes:
+  looks complicated, let's look at it more closely -->
+![](img/bfs_get_data.png){fig-align="center"}
 
 ## Let's take a closer look {.smaller}
 
+<!-- Speaker Notes:
+  let's go through this like by line: 
+  we have the base url, the endpoints (no params here?)
+  then perform, and specify how to get the response
+ -->
+
 ```r
 bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
-  # parameters can be seen here
-  pxweb_api_url <- paste0("https://www.pxweb.bfs.admin.ch/api/v1/", language, "/", number_bfs, "/", number_bfs, ".px")
-  # if too many requests HTTP 429
   # base url
   df_json <- httr2::request("https://www.pxweb.bfs.admin.ch/api/v1") %>%
     # add parameters
@@ -296,13 +329,15 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
 ![](img/browser.png)
 
 ### cURL
-
+<!-- TODO: get cURL -->
 :::
 <!-- show cURL, etc. of using API -->
 
 ## Why APIs?
 
-<!-- maybe by now, you have some ideas as to why API's are useful... -->
+<!-- 
+Speaker Notes:
+maybe by now, you have some ideas as to why API's are useful... -->
 
 - automation
 - easier to fetch specific data (specify time, specific indicators)
@@ -314,6 +349,10 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
 # Exercises: Build your own API wrapper 
 
 ## httr2 cheatsheet {.smaller}
+<!-- 
+Speaker Notes:
+these are the most important functions in httr2, and how they translate to the diagram we saw above
+ -->
 
 | Category | Function | Description |
 |-----------|-----------|-------------|
@@ -459,12 +498,13 @@ get_country_vaccine_rates("CH", 5)
 
 :::
 
-## Other examples of API wrappers for economic data
+## Other examples of APIs & API wrappers for economic data {.smaller}
 
 - the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
 - the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
 - the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
 - the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
+- [public-apis](https://github.com/public-apis/public-apis) a Github repository listing Public APIs
 
 ## Thank you for your attention! {.smaller}
 If you are interested in working with us or if you have any questions: 
