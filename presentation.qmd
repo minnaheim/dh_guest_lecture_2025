@@ -466,6 +466,15 @@ get_country_vaccine_rates("CH", 5)
 - the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
 - the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
 
+
+<!-- - Finance: the [Bloomberg API](https://www.bloomberg.com/professional/support/api-library/) -->
+<!-- - Social Media: the [Youtube API](https://developers.google.com/youtube/v3), Twitter API, etc.  -->
+<!-- - Geodata: Google Maps, OpenStreetMap, etc. -->
+<!-- - Connect to your Spotify account to retrieve data, or to your Garmin or Strava account for training data -->
+<!-- - OpenAI API -->
+<!-- - Others: [Chuck Norris Jokes API](https://api.chucknorris.io/) -->
+
+
 ## Thank you for your attention! {.smaller}
 If you are interested in working with us or if you have any questions: 
 
