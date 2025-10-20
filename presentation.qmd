@@ -206,11 +206,11 @@ Speaker Notes:
 
 
   API Protocol:
+  - the APIs we are concerned with and encounter most frequently are called: web APIs and REST APIs (mostly) use the HTTP, a type of protocol
   - protocol means explicit way of behaving, we as humans have implicit protocol too (like how to behave), but machines have explicit protocols, you can see this with http (how the internet works)
-  - HTTP has 4 main verbs: GET, POST, DELETE, PUT
-
+  - HTTP dictates how data exchange happens on the web, and hence essential for APIs
+  - most importantly: HTTP has 4 main verbs: GET, POST, DELETE, PUT
  -->
-  <!-- TODO: more research on http protocol (& difference in REST) -->
 
 
 ## API Conceptually
@@ -344,10 +344,13 @@ Speaker Notes:
   let's go through this like by line: 
   we have the base url, the endpoints (no params here?)
   then perform, and specify how to get the response
+
+
+  Important: this function uses httr2 to only get the structure & metadata of the function, not the actual panel data, this is done using pxWeb API (wrapper)...
  -->
 ::: {.panel-tabset}
 
-### Original
+### Function
 
 ```r
 bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
@@ -362,26 +365,12 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
     httr2::resp_body_json(simplifyVector = TRUE)
 
 ```
+### Browser Output
 
-### Code
-
-<!-- TODO: rewrite bfs_get_data simply, to work for our cause: spits out url and data-->
-
-### Output
-:::
-
-## Let's try it out {.smaller}
-
-
-
-<!-- TODO: why is this not containing the actual data too?
-
-figure out how to proceed here? show browser data after all?
-  -->
 ![](img/browser.png)
 
+:::
 
-<!-- show cURL, etc. of using API -->
 
 ## Why APIs?
 
@@ -494,14 +483,38 @@ get_case_counts <- function(country = "CH", period = c(30,365, "all")){
 get_case_counts("CH", 5)
 ```
 
-
-## Exercise Description
-- use the API documentation: https://disease.sh/docs/
-- use the template to write a function **to get vaccination rates for a country**
-<!-- TODO: give them function template -->
-
-
 :::
+
+
+## Exercise Description {.smaller}
+- use the API documentation: [https://disease.sh/docs/](https://disease.sh/docs/)
+- use the template to write a function **to get vaccination rates for a country**
+
+```r
+library(httr2)
+
+get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all")){
+
+  base_url <- "..."
+  final_url <- "..."
+
+  # perform  API call with httr2
+  req <- "..."(final_url) 
+  resp <- "..."(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+```
+
+# Sample Solution
+
 ## GET Vaccine Rates {.smaller}
 
 ::: {.panel-tabset}
