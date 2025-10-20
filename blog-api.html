@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Minna Heim">
-<meta name="dcterms.date" content="2025-10-16">
+<meta name="dcterms.date" content="2025-10-20">
 
 <title>API Blog Post – Guest Lecture Slides 2025</title>
 <style>
@@ -135,7 +135,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 16, 2025</p>
+      <p class="date">October 20, 2025</p>
     </div>
   </div>
   
@@ -147,6 +147,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<!-- 
+## What is good API Design
+verbs, not nouns & plural
+return codes & give good errors
+intuitive & hard to misuse
+information hiding 
+handling complexity
+  ? vs. path: limit responses behind the ‘?’ in a query parameter, or isolate specific component of the data the client is working with using a path parameter.
+-->
 <section id="the-problem-why-your-swiss-economic-analysis-is-always-out-of-date" class="level2">
 <h2 class="anchored" data-anchor-id="the-problem-why-your-swiss-economic-analysis-is-always-out-of-date">The Problem: Why Your Swiss Economic Analysis is Always Out of Date</h2>
 <p>Imagine you’re writing your Bachelor’s thesis on Swiss economic forecasting. You want to analyze how well the <strong>KOF Konjunkturbarometer</strong> (a leading economic indicator that predicts Switzerland’s near-future economic development) performs compared to actual economic outcomes.</p>
@@ -178,7 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>For Swiss economic data, you have ready-made tools like: - the <a href="https://www.rdocumentation.org/packages/kofdata/versions/0.2.1">kofdata</a> R Package (for KOF data) - the <a href="https://felixluginbuhl.com/BFS/">BFS</a> R package (for Swiss federal statistics) - the <a href="https://pypi.org/project/fredapi/">fredapi</a> Python Library (for US economic data)</p>
 <section id="example-getting-kof-barometer-data-the-smart-way" class="level3">
 <h3 class="anchored" data-anchor-id="example-getting-kof-barometer-data-the-smart-way">Example: Getting KOF Barometer Data the Smart Way</h3>
-<p>Remember our thesis scenario? Here’s how you’d solve it using the <code>kofdata</code> R package, which connects directly to the <a href="https://datenservice.kof.ethz.ch/">KOF API</a>. Instead of manual downloads, you get live, up-to-date data with just a few lines of code:</p>
+<p>Remember our thesis scenario? Here’s how you’d solve it using the <code>kofdata</code> R package, which is an R wrapper for the <a href="https://datenservice.kof.ethz.ch/">KOF API</a>. Instead of manual downloads, you get live, up-to-date data with just a few lines of code:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("kofdata")</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kofdata)</span>
@@ -211,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Easy comparisons (like comparing 2020 vs 2025 vintages above)</li>
 </ul>
 <p>Your thesis supervisor asks for updated results? Just re-run your code. The KOF releases revised data? Your analysis automatically uses the latest version. This is why experienced economists swear by APIs.</p>
-<p>But what if there’s no ready-made wrapper for the data you need? Let’s learn how APIs actually work under the hood, so you can build your own solutions.</p>
+<p>But what if there’s no ready-made wrapper for the data you need? Let’s learn how APIs actually work under the hood, so you can build your own solutions, whether that be your own API Wrapper, or even your own API (if you have access to and want to share your own data).</p>
 </section>
 </section>
 <section id="building-custom-api-wrappers" class="level2">
