@@ -26,22 +26,19 @@ Let's pretend, we want to reconstruct our own economic index  -->
 
 
 <!-- TODO: use swiss baro, not global -->
-```{r, echo=FALSE,results='hide',fig.keep='all'}
+```{r kofdata, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.keep='all'}
+suppressPackageStartupMessages(library(kofdata))
 
-# install.packages("quantmod")
-library(kofdata)
-baro_vint <- get_collection("globalbaro_vintages")
-baro_20210 <- baro_vint$`globalbaro_leading_2025-09`
+data <- get_time_series("kofbarometer")
 
 plot <- stats::ts.plot(
-  baro_20210,
+  data$kofbarometer,
   gpars = list(
     xlab = "Year",
     ylab = "Value",
     main = "KOF Global Barometer"
   )
 )
-
 plot
 ```
 
@@ -195,7 +192,6 @@ head(gdp_long, n=10)
 <!-- 
 Speaker Notes:
   API = standardising the way in which your computer talks to another computer (=server)
-  somehow, we need to tell the other computer where we want to go, and what we want to get, this is done with this link:
 
   Analogy:
   - so let's think about APIs in the way we have been trying to get data before: 

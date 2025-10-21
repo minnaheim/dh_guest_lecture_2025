@@ -1,0 +1,177 @@
+---
+title: "Guest Lecture 2025 - Leverage APIs for Economic Data"
+author: "Minna Heim"
+---
+
+<!-- TODO: find a better way of citing -->
+What you see in the plot below is the KOF Economic Barometer, which is responsible for predicting how the Swiss economy should perform in the near future [Source](https://kof.ethz.ch/en/forecasts-and-indicators/indicators/kof-economic-barometer.html). To do this well, the Barometer, and other Economic Indices include other time series data, which have an economically plausible influence on the Swiss business cycle. In the case of the KOF Barometer, this is upwards of 300 different variables, so upwards of 300 different time series, all to capture the complex dynamics of the Swiss Economy into one number. 
+
+```{r kofdata, echo=FALSE, message=FALSE, warning=FALSE, results='hide', fig.keep='all'}
+suppressPackageStartupMessages(library(kofdata))
+
+data <- get_time_series("kofbarometer")
+
+plot <- stats::ts.plot(
+  data$kofbarometer,
+  gpars = list(
+    xlab = "Year",
+    ylab = "Value",
+    main = "KOF Global Barometer"
+  )
+)
+plot
+```
+
+
+
+The reason why I am presenting this Economic Index to you, is because although this blog post is about APIs and their usage for economic data, we will go through the beginning of what it takes to create our own Economic Index - namely what it takes to efficiently get upwards of 300 time series. 
+
+<!-- Intro to my person here in the lecture... -->
+
+Hopefully, by the end of this blog post, you will gain a better understanding of API's and their usage, but moreover, you will have built your own API wrapper, and even potentially, your own API. All of this, will hopefully help you identify APIs in the real world - and realize, that APIs are used everywhere - from Art Museums to COVID-19 case rates.
+
+
+### Getting Data, the Naive Way:
+
+Let's go back to our initial example: when trying to gather the data to build our economic Index, how would we do this?
+
+The Naive way of doing this, would be to google the data we need from the Swiss Federal Statistical Office (BFS), such as Swiss GDP- which is a good representation of economic activity, but not the only one - and see what we can find. 
+
+![](img/google_datasets.png){fig-align="center"}
+
+Then, by clicking onto the BFS' Website, we could find their Economic Data Portal.
+
+![](img/wirtschaftsdaten.png){fig-align="center"}
+
+Then, after inputting our desired time series, we would find different variations of gdp data.
+
+![](img/search.png){fig-align="center"}
+
+After downloading the dataset from BFS, we can open and inspect it. The data is in excel and in wide format (meaning values are horizontally oriented) because it is more humanly readable this way, and nicer to look at. 
+
+When programming, we often prefer it to be in long format (values vertically oriented) because it makes plotting easier and because most time series data is represented this way. 
+<!-- TODO: factcheck  -->
+
+![](img/downloaded.png){fig-align="center"}
+
+So, once downloaded, we have to manipulate the data so that it fits our purpose:
+
+```r 
+library(readxl)
+library(magrittr)
+library(tidyr)
+
+data <- read_xlsx("examples/je-d-04.02.01.03.xlsx") 
+
+# subset only the rows 3 (= year) and 9 (= gdp)
+gdp <- data[9,]
+names(gdp) <- data[3,]
+
+# pivot data longer (from excel wide format to data frame long format)
+gdp_long <- gdp %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Year",
+    values_to = "GDP"
+  )
+
+# remove old headers 
+gdp_long <- gdp_long[-c(1:2),]
+
+# check structure
+# str(gdp_long)
+
+# convert to gdp numeric and year to year
+gdp_long$GDP <- as.numeric(gdp_long$GDP)
+gdp_long$Year <- as.integer(gdp_long$Year)
+
+head(gdp_long, n=10)
+```
+
+We read in our data, then select the rows which we need, which is the aggregated GDP, and the date. Then we pivot our data (which transforms the data from horizontally oriented to vertically oriented), and remove old headers. Finally, we make sure our variables are represented in their correct format. Then, after all of this, our data looks like this:
+
+
+```{r gdp data, echo=FALSE, message=FALSE, warning=FALSE}
+library(readxl)
+library(magrittr)
+library(tidyr)
+
+data <- read_xlsx("examples/je-d-04.02.01.03.xlsx") 
+
+# subset only the rows 3 (= year) and 9 (= gdp)
+gdp <- data[9,]
+names(gdp) <- data[3,]
+
+# pivot data longer (from excel wide format to data frame long format)
+gdp_long <- gdp %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "Year",
+    values_to = "GDP"
+  )
+
+# remove old headers 
+gdp_long <- gdp_long[-c(1:2),]
+
+# check structure
+# str(gdp_long)
+
+# convert to gdp numeric and year to year
+gdp_long$GDP <- as.numeric(gdp_long$GDP)
+gdp_long$Year <- as.integer(gdp_long$Year)
+
+head(gdp_long, n=10)
+```
+
+Finally, we have successfully searched for, imported and cleaned our first time series dataset for our Economic Index. It was quite a long and intensive process, wasn't it? We had to look for the correct data, and then clean it all. And given that we have approx. 299 time series to go, this could become quite unruly. 
+
+Especially because GDP is quite the common dataset, it's made readily available and published in a well known format, like excel. But once we get to more niche time series, they could be not only more difficult to find, but also more difficult to import and clean. 
+
+Because of this, let's introduce a different method for extracting data from a public source:
+
+### Getting Data, the API (wrapper) Way:
+
+API stands for Application Programming Interface, and essentially standardizes the way in which your computer communicates with another computer. 
+
+Let's think of it in terms of our current example: We the client want to get data from the BFS (= Server). And since this is difficult for us to naivgate, aka we have to click around and search on their website, APIs make this process easier and more seamless because APIs use protocols. 
+
+This means they use explicit set of rules, which everyone follows - this is similar to what we humans have, we have laws, that explicitly tell us what isn't allowed, and our implicit rules, that tell us how we should interact with others, say our social norms.
+
+But Machine-to-Machine communication doesn't work well with implicit, so we need to stipulate it using protocols. The APIs we use most frequently  are web APIs (use the internet) and REST APIs which (mostly) use the HTTP (hypertext transfer protocol) protocol. 
+
+The HTTP protocol dictates how data exchange happens on the web, so essential for APIs. Most important thing to know about this HTTP protocol is that it uses request & response protocol (aka clients request something from the server, the server sends a response) and that there are 4 main **HTTP request methods** used to determine the type of data exchange happening:
+
+- GET : retrieves data
+- POST : sends data
+- PUT: changes the data 
+- DELETE : deletes data
+
+Now that we know that APIs use the HTTP protocol, let's put it all together to explain what an API looks like:
+
+![](/img/api_concept.png){fig-align="center"}
+
+As mentioned before APIs use the HTTP protocol, so there is a client which sends a request to the server, and then receives a response. 
+
+The **request** consists of:
+
+- one of the HTTP request methods, such as GET (to get data) and 
+- the **Where** which is Base URL, since it represents the location of the server.
+- the **Which service** is specified through the Endpoint, which dictates whether the client wants all data, just the data with a specific ID, the user with a specific ID, etc. 
+- then the **how** is specified with additional parameters. You can think of them like search filters. There are 2 types of parameters:
+    - *path parameters*, like `/users/{userID}` or 
+    - *request body parameters* like `/users?ID=userID` (& can also be used to separate multiple body params)
+
+
+Once this request is sent to the server, it gives back a **response**:
+
+- **Status**(if the request was successful or unsuccessful)
+- **Response Body** depending on the request you might get requested data, an acknowledgment that a resource was created or updated, an error message. Common formats of the response body are JSON and HTML.
+
+Let's use what we've learnt to look at an example:
+
+![](/img/api_url.png){fig-align="center"}
+
+
+<!-- TODO: explain What's happening: -->
+
+I encourage you to try it out yourself: use the URL: ...
