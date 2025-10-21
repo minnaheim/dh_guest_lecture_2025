@@ -1,6 +1,14 @@
 ---
 title: "Guest Lecture 2025 - Leverage APIs for Economic Data"
 author: "Minna Heim"
+format:
+  html:
+    code-line-numbers: true
+toc: false
+draft: false
+publishDate: "2025-10-21"
+category: "Recap"
+tags: [API, Economics]
 ---
 
 <!-- TODO: find a better way of citing -->
@@ -164,14 +172,289 @@ The **request** consists of:
 
 Once this request is sent to the server, it gives back a **response**:
 
-- **Status**(if the request was successful or unsuccessful)
-- **Response Body** depending on the request you might get requested data, an acknowledgment that a resource was created or updated, an error message. Common formats of the response body are JSON and HTML.
+- **Status**: if the request was successful or unsuccessful
+- **Response Body**: depending on the request you might get requested data, an acknowledgment that a resource was created or updated, an error message. Common formats of the response body are JSON and HTML.
 
 Let's use what we've learnt to look at an example:
 
 ![](/img/api_url.png){fig-align="center"}
 
+Here, we're using the GET request method, the base URL of the met museum, the endpoint to the museum collections and to the search endpoint, and adding a keyword as a parameter to get the number of objects and IDs of objects which contain this keyword in their title.
 
-<!-- TODO: explain What's happening: -->
+I encourage you to try out GET API call yourself, by putting in the URL of the Example into your browser and inputting your own search word. Since HTTP is used on the web, we can perform the GET request via our browser as well. 
 
-I encourage you to try it out yourself: use the URL: ...
+URL: [https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread](https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread)
+
+### API Wrappers
+
+The most frequent way we as programmers encounter APIs is through so called API wrappers, you can think of them like simple programs that are intermediaries between you and your API, so they wrap the API. 
+
+API wrappers usually allow you to do complex API calls in an easier environment and are tailored to your programming language, so usually easier for us to use. 
+
+![](/img/api_wrapper.png){fig-align="center"}
+
+Here is a visual example of how you might encounter the previous example in an API wrapper. Notice how the functionality stays the same, we can perform the same tasks, but see and interact with less of the complexity **(=information hiding)**
+
+
+#### Use the BFS API Wrapper for R
+
+Let's go back to our example of getting data from the Swiss Federal Statistical Office (BFS). Since we have already imported and cleaned our gdp data, we want to move on to the next relevant time series. One other factor that could be a good predictor for economic activity in switzerland, could be energy consumption over time. 
+
+Luckily for us, we can use the BFS' API wrapper, which is the [BFS R Package](https://cran.r-project.org/web/packages/BFS/index.html) to get our energy data. 
+
+
+```r
+# devtools::install_github("lgnbhl/BFS")
+library(BFS)
+
+# to inspect functions, use ?function, e.g. 
+?bfs_get_catalog_data
+
+bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- "px-x-0204000000_106"
+energy_df <- bfs_get_data(dataset_nr, lang = "en")
+
+# filter only total energy accounts
+total_energy <- subset(
+  energy_df,
+  # filter for totals for each of the columns 
+  `Economy and households` == "Economy and households - Total" &
+  `Energy product` == "Energy product - Total",
+  # select only the two relevant columns
+  select = c(Year, `Energy accounts of economy and households`)
+)
+
+names(total_energy)[2] <- "Amount"
+
+# View(total_energy)
+head(total_energy, n=10)
+```
+Let's go through the code line-by-line:
+
+First we install and load the package, then we can inspect the functions we will use, such as `bfs_get_catalog_data` to see that we can use this function to determine what kind of data BFS publishes, based on keywords. 
+
+```{r bfs api wrapper 1, echo=FALSE, message=FALSE, warning=FALSE}
+library(BFS)
+
+bfs_get_catalog_data(language = "en", title = "energy")
+```
+
+We search for energy datasets, save the respective ID of the dataset, and then GET the data, using the `bfs_get_data` function.
+
+After line 9, we are already done with the API usage for this example. The rest is just filtering the dataset to get only the columns of interest (total Energy Product across all Economy and Households)
+
+When inspecting the data, it looks like this:
+
+```{r bfs api wrapper 2, echo=FALSE, message=FALSE, warning=FALSE}
+# devtools::install_github("lgnbhl/BFS")
+library(BFS)
+
+# to inspect functions, use ?function, e.g. 
+?bfs_get_catalog_data
+
+# bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- "px-x-0204000000_106"
+energy_df <- bfs_get_data(dataset_nr, lang = "en")
+
+# filter only total energy accounts
+total_energy <- subset(
+  energy_df,
+  # filter for totals for each of the columns 
+  `Economy and households` == "Economy and households - Total" &
+  `Energy product` == "Energy product - Total",
+  # select only the two relevant columns
+  select = c(Year, `Energy accounts of economy and households`)
+)
+
+names(total_energy)[2] <- "Amount"
+
+# View(total_energy)
+head(total_energy, n=10)
+```
+
+In theory, we could be done with this example - using API wrappers instead of manually looking for data on the web makes it easier for us to scale our example - meaning we can easily fetch our 300 time series, with little extra effort.
+
+Still, to get a deeper understanding of how APIs work, we could also take a look at how API Wrappers work under the hood. Luckily for us, R packages like BFS are open source (like the R programming language) so we can see how a function such as `bfs_get_data` is written. We can go to the Package author's github page, and [find the function](https://github.com/lgnbhl/BFS/blob/master/R/bfs_get_data.R)
+
+![](img/bfs_get_data.png){fig-align="center"}
+
+This might look a bit complex, so let's break it down by looking at the essential code: 
+
+```r
+bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
+  # base url
+  df_json <- httr2::request("https://www.pxweb.bfs.admin.ch/api/v1") %>%
+    # add endpoints 
+    httr2::req_url_path_append(paste0(language, "/", number_bfs, "/", number_bfs, ".px")) %>%
+    httr2::req_retry(max_tries = 2, max_seconds = 10) %>%
+    # executre request
+    httr2::req_perform() %>%
+    # transform response to json
+    httr2::resp_body_json(simplifyVector = TRUE)
+```
+<!-- TODO: add explanation about pxweb -->
+In essence, the function uses the existing API to build a request, then perform it, and save the response body. 
+
+Here, we build the request with the base URL, then append this URL with our endpoints which are the dataset ID and the language, and then perform the request and specify that the response body (which contains the data) should be in JSON.
+
+Important to mention here, is that these above functions are used to fetch the general structure of the data, i.e. the Units, and different data categories. This information is then being used, to fetch the actual data via the px-web API which is a way of distributing data that statistical offices like to use - but is rarely used outside of these circles - hence I won't delve too deep into the matter. In principle, we could also use the functions presented above to get the data, and other API wrappers in R that you can find do so.
+
+We can also try running the final URL which we create with the above functions (until line 5) in our browser, as we did before, to see what the structure of our data looks like:
+
+![](img/browser.png)
+
+
+## Why APIs?
+
+By now you might have gathered an idea or two about why APIs are important and good to use. 
+
+Here are some additional benefits:
+
+- Consistency: directly from the source, and up-to-date data (important for time series revisions)
+- Speed and Scalability: as seen in our example, getting hundreds of time series through googling and searching is not scalable or quick
+- Automation: the collection of data can be automated easily
+- Easier to fetch data: some data is difficult to find and the specification of variables or certain time frames is easier to do. 
+- APIs are used everywhere! - Understanding how they work help you identify how data transfer happens
+
+
+## Exercises:
+
+Now that APIs have been thoroughly introduced and their importance is clearer, try to build your own API wrapper. 
+
+Most commonly used APIs already have pre-built API wrappers, but it could be that they are not available in your programming language of choice, or are not maintained, or they don't exist at all. In that case, knowing how to go about building your own API wrapper could prove to be very useful. 
+
+In R, the most commonly used Package to work with Web APIs is the [httr2 package](https://httr2.r-lib.org/) - on their website, you can find the documentation to get started with using httr2. A short cheatsheet summarizes the essential functions:
+
+
+| Category | Function | Description |
+|-----------|-----------|-------------|
+| **Request** | `request()` | Creates a new HTTP request object that defines the endpoint and method (e.g., GET, POST). |
+| **Request** | `req_perform()` | Sends the built request to the server and *returns the response object*. |
+| **Response** | `resp_body_json()` | Parses the response body as JSON and returns it as an R list. |
+| **Response** | `resp_status()` | Retrieves the HTTP status from the response object. |
+
+: {tbl-colwidths="[25,25,50]"}
+
+
+### Build your own function wrapping the COVID API
+
+Let's take stock of the datasets that we've gathered so far: we have swiss gdp and energy consumption. Now, let's say we want to look at how the COVID pandemic has affected the Swiss Economy. To understand this better, we would need to look at COVID case - and vaccination rates.
+
+Luckily, the [disease.sh docs](https://disease.sh/docs/) which provide not only an open API for disease-related statistics, but also nice API documentation, so we can look at various APIs and try out their endpoints! Try it out!
+
+
+![](/img/swagger_overview.png){fig-align="center"}
+
+Here we can see various COVID-19 APIs, such as from Worldometer or Johns Hopkins University. 
+
+![](/img/historical_endpoint.png){fig-align="center"}
+
+Selecting one endpoint to try out, we can identify the historical case counts of certain countries. 
+
+![](/img/try_out_endpoint.png){fig-align="center"}
+
+When trying out the endpoint, we can even get the data as responses, and see all of the components of a real API call. 
+
+Let's try to turn this example into an actual function
+
+
+```r
+library(httr2)
+
+get_case_counts <- function(country = "CH", period = c(30,365, "all")){
+  # "https://disease.sh/v3/covid-19/historical/CH?lastdays=30"
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/historical"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period)
+
+  # perform API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+get_case_counts("CH", 1)
+```
+
+When running the last line `get_case_counts("CH", 1)` we get the following output
+
+```{r covid cases, echo=FALSE, message=FALSE, warning=FALSE}
+library(httr2)
+
+get_case_counts <- function(country = "CH", period = c(30,365, "all")){
+  # "https://disease.sh/v3/covid-19/historical/CH?lastdays=30"
+  # this way is error prone, try to match.args to check if the inputs are correct
+  base_url <- "https://disease.sh/v3/covid-19/historical"
+  final_url <- paste0(base_url, "/", country, "?lastdays=", period)
+
+  # perform API call with httr2
+  req <- request(final_url) 
+  resp <- req_perform(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+head(get_case_counts("CH", 1))
+```
+
+Here it's important to note that the Johns Hopkins University apparently stopped releasing this data after 3.9.2023 and it does seem a bit implausible that there are 0 recoveries on that day - alas!
+
+### Your turn! 
+
+Use the same documentation as above ([disease.sh docs](https://disease.sh/docs/)) to get the historical vaccination rates of a country.
+
+Try out the desired endpoint using the documentation, before writing your own function.
+
+Feel free to use this function as a template:
+
+```r
+library(httr2)
+
+get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all")){
+
+  base_url <- "..."
+  final_url <- "..."
+
+  # perform  API call with httr2
+  req <- "..."(final_url) 
+  resp <- "..."(req)
+
+  # if request is not successful
+  if (resp_status(resp) != 200){
+    message("The request was not successful")
+  }
+  else{
+    return(resp_body_json(resp))
+  }
+}
+
+```
+
+Try out your built function! What does it return?
+
+Congratulations on adding one more dataset to your collection for your economic indicator. 
+
+But, it doesn't stop here! There are many other API (Wrappers) in R that you can use for your future analyses, to name a few:
+
+
+- the [kofdata](https://www.rdocumentation.org/packages/kofdata/versions/0.2.1) R Package (for KOF data)
+- the [BFS](https://felixluginbuhl.com/BFS/) R package (for Swiss federal statistics)
+- the [fredapi](https://pypi.org/project/fredapi/) Python Library (for US economic data)
+- the [fredr](https://sboysel.github.io/fredr/) data from the Federal Reserve Economic Data (FRED) API R package
+- [public-apis](https://github.com/public-apis/public-apis) a Github repository listing Public APIs
+
+
+In case you have any questions, feel free to contact me :) [heim@kof.ethz.ch](mailto:heim@kof.ethz.ch)

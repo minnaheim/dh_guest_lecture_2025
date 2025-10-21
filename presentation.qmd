@@ -352,7 +352,7 @@ Speaker Notes:
 bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
   # base url
   df_json <- httr2::request("https://www.pxweb.bfs.admin.ch/api/v1") %>%
-    # add endpoints (no params here)
+    # add endpoints
     httr2::req_url_path_append(paste0(language, "/", number_bfs, "/", number_bfs, ".px")) %>%
     httr2::req_retry(max_tries = 2, max_seconds = 10) %>%
     # executre request
