@@ -248,7 +248,7 @@ response consists of status (e.g. success) and response body
 ![](/img/api_conceptual_5.png){fig-align="center"}
 
 
-## API Example 
+## API Example {.smaller}
 <img src="/img/api_url.png"  style="display:block; margin:0 auto; width:90%;">
 <!-- 
 Speaker Notes: 
