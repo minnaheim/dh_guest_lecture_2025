@@ -24,7 +24,7 @@ plot <- stats::ts.plot(
   gpars = list(
     xlab = "Year",
     ylab = "Value",
-    main = "KOF Global Barometer"
+    main = "KOF Economic Barometer"
   )
 )
 plot
@@ -147,33 +147,42 @@ This means they use explicit set of rules, which everyone follows - this is simi
 
 But Machine-to-Machine communication doesn't work well with implicit, so we need to stipulate it using protocols. The APIs we use most frequently  are web APIs (use the internet) and REST APIs which (mostly) use the HTTP (hypertext transfer protocol) protocol. 
 
-The HTTP protocol dictates how data exchange happens on the web, so essential for APIs. Most important thing to know about this HTTP protocol is that it uses request & response protocol (aka clients request something from the server, the server sends a response) and that there are 4 main **HTTP request methods** used to determine the type of data exchange happening:
+The HTTP protocol dictates how data exchange happens on the web, so essential for APIs. Most important thing to know about this HTTP protocol is that it uses *client & server* and  *request & response* protocols (aka clients request something from the server, the server sends a response)
+
+![](/img/api_conceptual_1.png){fig-align="center"}
+
+And that there are 4 main **HTTP request methods** used to determine the type of data exchange happening:
 
 - GET : retrieves data
 - POST : sends data
 - PUT: changes the data 
 - DELETE : deletes data
 
-Now that we know that APIs use the HTTP protocol, let's put it all together to explain what an API looks like:
+![](/img/api_conceptual_2.png){fig-align="center"}
 
-![](/img/api_concept.png){fig-align="center"}
-
-As mentioned before APIs use the HTTP protocol, so there is a client which sends a request to the server, and then receives a response. 
+Now that we know that APIs use the HTTP protocol, let's put it all together to explain what an API looks like.
 
 The **request** consists of:
 
 - one of the HTTP request methods, such as GET (to get data) and 
 - the **Where** which is Base URL, since it represents the location of the server.
 - the **Which service** is specified through the Endpoint, which dictates whether the client wants all data, just the data with a specific ID, the user with a specific ID, etc. 
+
+![](/img/api_conceptual_3.png){fig-align="center"}
+
 - then the **how** is specified with additional parameters. You can think of them like search filters. There are 2 types of parameters:
     - *path parameters*, like `/users/{userID}` or 
     - *request body parameters* like `/users?ID=userID` (& can also be used to separate multiple body params)
+
+![](/img/api_conceptual_4.png){fig-align="center"}
 
 
 Once this request is sent to the server, it gives back a **response**:
 
 - **Status**: if the request was successful or unsuccessful
 - **Response Body**: depending on the request you might get requested data, an acknowledgment that a resource was created or updated, an error message. Common formats of the response body are JSON and HTML.
+
+![](/img/api_conceptual_5.png){fig-align="center"}
 
 Let's use what we've learnt to look at an example:
 
