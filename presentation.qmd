@@ -1,6 +1,6 @@
 ---
-title: "Guest Lecture 2025"
-subtitle: "Leverage APIs for Economic Data"
+title: "APIs for Economic Data"
+subtitle: "Guest Lecture 2025"
 author: "Minna Heim"
 # aurel: added the most important :-)
 format:
@@ -50,7 +50,7 @@ plot
 
 <!-- Speaker Notes: I work in the institute that produces the data i just showed you -->
 
-## About the institute and my work
+## About the institute and our work
 
 :::: {.columns}
 ::: {.column width="40%"}
@@ -60,9 +60,9 @@ plot
 :::
 
 ::: {.column width="60%"}
-- From surveys to innovation to forecasting
+- from surveys to innovation to forecasting
 - software, infrastructure and data publications with economic use cases.
-- Teaching doctoral students to work with data & co. 
+- teaching PhD students to work with data & open source ecosystem. 
 :::
 ::::
 
@@ -124,12 +124,12 @@ names(gdp) <- data[3,]
 gdp_long <- gdp %>%
   pivot_longer(cols = everything(), names_to = "Year", values_to = "GDP")
 
-# remove old headers 
+# remove old headers (before pivot these used to be the first two columns)
 gdp_long <- gdp_long[-c(1:2),]
 # check structure
 # str(gdp_long)
 
-# convert to gdp numeric and year to year
+# convert to gdp num and year to int
 gdp_long$GDP <- as.numeric(gdp_long$GDP)
 gdp_long$Year <- as.integer(gdp_long$Year)
 
@@ -248,8 +248,8 @@ response consists of status (e.g. success) and response body
 ![](/img/api_conceptual_5.png){fig-align="center"}
 
 
-## API Example {.smaller}
-<img src="/img/api_url.png"  style="display:block; margin:0 auto; width:90%;">
+##
+<img src="/img/api_url.png"  style="display:block; margin:0 auto; width:80%;">
 <!-- 
 Speaker Notes: 
 when explaining this, encourage students to try out the link themselves -> how many IDs do we get when we use "poodle"
@@ -536,17 +536,15 @@ get_country_vaccine_rates <- function(country = "CH", period = "all"){
     return(resp_body_json(resp))
   }
 }
-
 ```
+- copy this template at: [https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html](https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html)
 
+
+<!-- 
 # Sample Solution
 
 ## GET Vaccine Rates {.smaller}
 
-<!-- Sample Solution:
-
-if you were to build your own API wrapper functions - need to make them more "fool-proof" and descriptive when it comes to errors, e.g.. -> this is just a simple example 
- -->
 ::: {.panel-tabset}
 
 ### Code 
@@ -601,8 +599,7 @@ get_country_vaccine_rates <- function(country = "CH", period = "all"){
 get_country_vaccine_rates("CH", 5)
 ```
 
-:::
-
+::: -->
 
 ## Other examples of APIs & API wrappers for economic data {.smaller}
 
