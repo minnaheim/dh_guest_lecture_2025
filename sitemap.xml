@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/blog-api.html</loc>
-    <lastmod>2025-10-17T13:47:27.556Z</lastmod>
+    <loc>https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/lecture_blogpost.html</loc>
+    <lastmod>2025-10-22T14:23:32.046Z</lastmod>
   </url>
   <url>
     <loc>https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/presentation.html</loc>
-    <lastmod>2025-10-19T18:47:01.722Z</lastmod>
+    <lastmod>2025-10-22T14:21:07.634Z</lastmod>
+  </url>
+  <url>
+    <loc>https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/blog-api.html</loc>
+    <lastmod>2025-10-17T13:47:27.556Z</lastmod>
   </url>
 </urlset>
