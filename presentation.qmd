@@ -36,7 +36,7 @@ plot <- stats::ts.plot(
   gpars = list(
     xlab = "Year",
     ylab = "Value",
-    main = "KOF Global Barometer"
+    main = "KOF Economic Barometer"
   )
 )
 plot
