@@ -4,7 +4,7 @@
     "href": "lecture_blogpost.html",
     "title": "Guest Lecture 2025 - Leverage APIs for Economic Data",
     "section": "",
-    "text": "What you see in the plot below is the KOF Economic Barometer, which is responsible for predicting how the Swiss economy should perform in the near future Source. To do this well, the Barometer, and other Economic Indices include other time series data, which have an economically plausible influence on the Swiss business cycle. In the case of the KOF Barometer, this is upwards of 300 different variables, so upwards of 300 different time series, all to capture the complex dynamics of the Swiss Economy into one number.\nThe reason why I am presenting this Economic Index to you, is because although this blog post is about APIs and their usage for economic data, we will go through the beginning of what it takes to create our own Economic Index - namely what it takes to efficiently get upwards of 300 time series.\nHopefully, by the end of this blog post, you will gain a better understanding of API’s and their usage, but moreover, you will have built your own API wrapper, and even potentially, your own API. All of this, will hopefully help you identify APIs in the real world - and realize, that APIs are used everywhere - from Art Museums to COVID-19 case rates."
+    "text": "What you see in the plot below is the KOF Economic Barometer, which is responsible for predicting how the Swiss economy should perform in the near future Source. To do this well, the Barometer, and other Economic Indices include other time series data, which have an economically plausible influence on the Swiss business cycle. In the case of the KOF Barometer, this is upwards of 300 different variables, so upwards of 300 different time series, all to capture the complex dynamics of the Swiss Economy into one number.\nThe reason why I am presenting this Economic Index to you, is because although this blog post is about APIs and their usage for economic data, we will go through the beginning of what it takes to create our own Economic Index - namely what it takes to efficiently get upwards of 300 time series.\nBy the end of this blog post, you will gain a better understanding of API’s and their usage, but moreover, you will have built your own API wrapper, and even potentially, your own API. All of this will hopefully help you identify APIs in the real world - and realize, that APIs are used everywhere - from Art Museums to COVID-19 case rates."
   },
   {
     "objectID": "lecture_blogpost.html#why-apis",
@@ -23,119 +23,105 @@
   {
     "objectID": "presentation.html#how-do-we-get-the-data-for-this-plot",
     "href": "presentation.html#how-do-we-get-the-data-for-this-plot",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "How do we get the data for this Plot?",
     "text": "How do we get the data for this Plot?"
   },
   {
     "objectID": "presentation.html#about-me",
     "href": "presentation.html#about-me",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "About me",
     "text": "About me\n\nI took this course 4 years ago!\nDoing a Master in Data Science & minor in Economics at UZH\nWorking at KOF-ETH"
   },
   {
-    "objectID": "presentation.html#about-the-institute-and-my-work",
-    "href": "presentation.html#about-the-institute-and-my-work",
-    "title": "Guest Lecture 2025",
-    "section": "About the institute and my work",
-    "text": "About the institute and my work\n\n\n  \n\n\nFrom surveys to innovation to forecasting\nsoftware, infrastructure and data publications with economic use cases.\nTeaching doctoral students to work with data & co."
+    "objectID": "presentation.html#about-the-institute-and-our-work",
+    "href": "presentation.html#about-the-institute-and-our-work",
+    "title": "APIs for Economic Data",
+    "section": "About the institute and our work",
+    "text": "About the institute and our work\n\n\n  \n\n\nfrom surveys to innovation to forecasting\nsoftware, infrastructure and data publications with economic use cases.\nteaching PhD students to work with data & open source ecosystem."
   },
   {
     "objectID": "presentation.html#what-will-you-know-by-the-end-of-this-lecture",
     "href": "presentation.html#what-will-you-know-by-the-end-of-this-lecture",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "What will you know by the end of this lecture?",
     "text": "What will you know by the end of this lecture?\n\ngain a better understanding of how APIs are used\nbuild your own mini wrapper\nlearn to identify and understand the use of APIs in real-world contexts"
   },
   {
     "objectID": "presentation.html#import-clean-data",
     "href": "presentation.html#import-clean-data",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Import & Clean Data",
-    "text": "Import & Clean Data\n\n\nCodeData\n\n\nlibrary(readxl)\nlibrary(magrittr)\nlibrary(tidyr)\n\ndata &lt;- read_xlsx(\"examples/je-d-04.02.01.03.xlsx\") \n\n# subset only the rows 3 (= year) and 9 (= gdp)\ngdp &lt;- data[9,]\nnames(gdp) &lt;- data[3,]\n\n# pivot data longer (from excel wide format to data frame long format)\ngdp_long &lt;- gdp %&gt;%\n  pivot_longer(cols = everything(), names_to = \"Year\", values_to = \"GDP\")\n\n# remove old headers \ngdp_long &lt;- gdp_long[-c(1:2),]\n# check structure\n# str(gdp_long)\n\n# convert to gdp numeric and year to year\ngdp_long$GDP &lt;- as.numeric(gdp_long$GDP)\ngdp_long$Year &lt;- as.integer(gdp_long$Year)\n\nhead(gdp_long, n=10)\n\n\n\n\n\n# A tibble: 10 × 2\n    Year     GDP\n   &lt;int&gt;   &lt;dbl&gt;\n 1  1995 423515.\n 2  1996 426882.\n 3  1997 433747.\n 4  1998 444955.\n 5  1999 453531.\n 6  2000 476794.\n 7  2001 489674.\n 8  2002 489293.\n 9  2003 493652.\n10  2004 508608."
-  },
-  {
-    "objectID": "presentation.html#api-example",
-    "href": "presentation.html#api-example",
-    "title": "Guest Lecture 2025",
-    "section": "API Example",
-    "text": "API Example"
+    "text": "Import & Clean Data\n\n\nCodeData\n\n\nlibrary(readxl)\nlibrary(magrittr)\nlibrary(tidyr)\n\ndata &lt;- read_xlsx(\"examples/je-d-04.02.01.03.xlsx\") \n\n# subset only the rows 3 (= year) and 9 (= gdp)\ngdp &lt;- data[9,]\nnames(gdp) &lt;- data[3,]\n\n# pivot data longer (from excel wide format to data frame long format)\ngdp_long &lt;- gdp %&gt;%\n  pivot_longer(cols = everything(), names_to = \"Year\", values_to = \"GDP\")\n\n# remove old headers (before pivot these used to be the first two columns)\ngdp_long &lt;- gdp_long[-c(1:2),]\n# check structure\n# str(gdp_long)\n\n# convert to gdp num and year to int\ngdp_long$GDP &lt;- as.numeric(gdp_long$GDP)\ngdp_long$Year &lt;- as.integer(gdp_long$Year)\n\nhead(gdp_long, n=10)\n\n\n\n\n\n# A tibble: 10 × 2\n    Year     GDP\n   &lt;int&gt;   &lt;dbl&gt;\n 1  1995 423515.\n 2  1996 426882.\n 3  1997 433747.\n 4  1998 444955.\n 5  1999 453531.\n 6  2000 476794.\n 7  2001 489674.\n 8  2002 489293.\n 9  2003 493652.\n10  2004 508608."
   },
   {
     "objectID": "presentation.html#api-wrappers",
     "href": "presentation.html#api-wrappers",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "API wrappers",
     "text": "API wrappers"
   },
   {
     "objectID": "presentation.html#use-the-bfs-api-wrapper-for-r",
     "href": "presentation.html#use-the-bfs-api-wrapper-for-r",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Use the BFS API Wrapper for R",
     "text": "Use the BFS API Wrapper for R\n\n\ncodeoutput 1output 2output 3\n\n\n# devtools::install_github(\"lgnbhl/BFS\")\nlibrary(BFS)\n\n# to inspect functions, use ?function, e.g. \n?bfs_get_catalog_data\n\nbfs_get_catalog_data(language = \"en\", title = \"energy\")\ndataset_nr &lt;- \"px-x-0204000000_106\"\nenergy_df &lt;- bfs_get_data(dataset_nr, lang = \"en\")\n\n# filter only total energy accounts\ntotal_energy &lt;- subset(\n  energy_df,\n  # filter for totals for each of the columns \n  `Economy and households` == \"Economy and households - Total\" &\n  `Energy product` == \"Energy product - Total\",\n  # select only the two relevant columns\n  select = c(Year, `Energy accounts of economy and households`)\n)\n\nnames(total_energy)[2] &lt;- \"Amount\"\n\n# View(total_energy)\nhead(total_energy, n=10)\n\n\n\n\n# A tibble: 1 × 6\n  title                 language number_bfs number_asset publication_date url_px\n  &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;date&gt;           &lt;chr&gt; \n1 Energy accounts of e… en       px-x-0204… 36179320     2025-09-30       https…\n\n\n\n\n\n\n# A tibble: 6 × 5\n  `Unit of measure` `Economy and households`       `Energy product`       Year \n  &lt;chr&gt;             &lt;chr&gt;                          &lt;chr&gt;                  &lt;chr&gt;\n1 Terajoules        Economy and households - Total Energy product - Total 2000 \n2 Terajoules        Economy and households - Total Energy product - Total 2001 \n3 Terajoules        Economy and households - Total Energy product - Total 2002 \n4 Terajoules        Economy and households - Total Energy product - Total 2003 \n5 Terajoules        Economy and households - Total Energy product - Total 2004 \n6 Terajoules        Economy and households - Total Energy product - Total 2005 \n# ℹ 1 more variable: `Energy accounts of economy and households` &lt;dbl&gt;\n\n\n\n\n\n\n# A tibble: 10 × 2\n   Year    Amount\n   &lt;chr&gt;    &lt;dbl&gt;\n 1 2000  1103603.\n 2 2001  1127768.\n 3 2002  1112879.\n 4 2003  1130842.\n 5 2004  1131767.\n 6 2005  1121999.\n 7 2006  1157170.\n 8 2007  1126804.\n 9 2008  1158734.\n10 2009  1136915."
   },
   {
     "objectID": "presentation.html#lets-take-a-closer-look",
     "href": "presentation.html#lets-take-a-closer-look",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Let’s take a closer look",
     "text": "Let’s take a closer look\n\n\nFunctionBrowser Output\n\n\nbfs_get_data &lt;- function(number_bfs, language = \"de\", query = NULL, column_name_type = \"text\", variable_value_type = \"text\", clean_names = FALSE, delay = NULL) {\n  # base url\n  df_json &lt;- httr2::request(\"https://www.pxweb.bfs.admin.ch/api/v1\") %&gt;%\n    # add endpoints\n    httr2::req_url_path_append(paste0(language, \"/\", number_bfs, \"/\", number_bfs, \".px\")) %&gt;%\n    httr2::req_retry(max_tries = 2, max_seconds = 10) %&gt;%\n    # executre request\n    httr2::req_perform() %&gt;%\n    # transform response to json\n    httr2::resp_body_json(simplifyVector = TRUE)"
   },
   {
     "objectID": "presentation.html#why-apis",
     "href": "presentation.html#why-apis",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Why APIs?",
     "text": "Why APIs?\n\n\nautomation\neasier to fetch specific data (specify time, specific indicators)\nreal time data\nAPI usage (often) so much easier than scraping & downloading & reading & cleaning!! (all-in-1)\nused everywhere!"
   },
   {
     "objectID": "presentation.html#httr2-cheatsheet",
     "href": "presentation.html#httr2-cheatsheet",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "httr2 cheatsheet",
     "text": "httr2 cheatsheet\n\n\n\n\n\n\n\n\n\nCategory\nFunction\nDescription\n\n\n\n\nRequest\nrequest()\nCreates a new HTTP request object that defines the endpoint and method (e.g., GET, POST).\n\n\nRequest\nreq_perform()\nSends the built request to the server and returns the response object.\n\n\nResponse\nresp_body_json()\nParses the response body as JSON and returns it as an R list.\n\n\nResponse\nresp_status()\nRetrieves the HTTP status from the response object."
   },
   {
     "objectID": "presentation.html#covid-19-api",
     "href": "presentation.html#covid-19-api",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "COVID 19 API",
     "text": "COVID 19 API\n\nbuilding our Economic Index\nfor the time during and post covid\nfor this, get vaccination and COVID 19 case rates (incl. death & recovery)"
   },
   {
     "objectID": "presentation.html#get-covid-case-counts",
     "href": "presentation.html#get-covid-case-counts",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "GET COVID Case Counts",
     "text": "GET COVID Case Counts\n\nCodeData\n\n\nlibrary(httr2)\n# library(magrittr)\nget_case_counts &lt;- function(country = \"CH\", period = \"all\"){\n  base_url &lt;- \"https://disease.sh/v3/covid-19/historical\"\n  final_url &lt;- paste0(base_url, \"/\", country, \"?lastdays=\", period)\n\n  # alternative - using magrittr pipe\n  # req &lt;- request(base_url) %&gt;%\n  #   req_url_path_append(country) %&gt;%\n  #   req_url_query(period = period)\n\n  # perform API call with httr2\n  req &lt;- request(final_url) \n  resp &lt;- req_perform(req)\n\n  # if request is not successful\n  if (resp_status(resp) != 200){\n    message(\"The request was not successful\")\n  }\n  else{\n    return(resp_body_json(resp))\n  }\n}\n\nget_case_counts(\"CH\", 5)\n\n\n\n\n\n$country\n[1] \"Switzerland\"\n\n$province\n$province[[1]]\n[1] \"mainland\"\n\n\n$timeline\n$timeline$cases\n$timeline$cases$`3/5/23`\n[1] 4412439\n\n$timeline$cases$`3/6/23`\n[1] 4412439\n\n$timeline$cases$`3/7/23`\n[1] 4413911\n\n$timeline$cases$`3/8/23`\n[1] 4413911\n\n$timeline$cases$`3/9/23`\n[1] 4413911\n\n\n$timeline$deaths\n$timeline$deaths$`3/5/23`\n[1] 14207\n\n$timeline$deaths$`3/6/23`\n[1] 14207\n\n$timeline$deaths$`3/7/23`\n[1] 14207\n\n$timeline$deaths$`3/8/23`\n[1] 14209\n\n$timeline$deaths$`3/9/23`\n[1] 14210\n\n\n$timeline$recovered\n$timeline$recovered$`3/5/23`\n[1] 0\n\n$timeline$recovered$`3/6/23`\n[1] 0\n\n$timeline$recovered$`3/7/23`\n[1] 0\n\n$timeline$recovered$`3/8/23`\n[1] 0\n\n$timeline$recovered$`3/9/23`\n[1] 0"
   },
   {
     "objectID": "presentation.html#exercise-description",
     "href": "presentation.html#exercise-description",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Exercise Description",
-    "text": "Exercise Description\n\nuse the API documentation: https://disease.sh/docs/\nuse the template to write a function to get vaccination rates for a country\n\nlibrary(httr2)\n\nget_country_vaccine_rates &lt;- function(country = \"CH\", period = \"all\"){\n\n  base_url &lt;- \"...\"\n  final_url &lt;- \"...\"\n\n  # perform  API call with httr2\n  req &lt;- \"...\"(final_url) \n  resp &lt;- \"...\"(req)\n\n  # if request is not successful\n  if (resp_status(resp) != 200){\n    message(\"The request was not successful\")\n  }\n  else{\n    return(resp_body_json(resp))\n  }\n}"
-  },
-  {
-    "objectID": "presentation.html#get-vaccine-rates",
-    "href": "presentation.html#get-vaccine-rates",
-    "title": "Guest Lecture 2025",
-    "section": "GET Vaccine Rates",
-    "text": "GET Vaccine Rates\n\n\nCodeData\n\n\nlibrary(httr2)\n\nget_country_vaccine_rates &lt;- function(country = \"CH\", period =  \"all\"){\n  # https://disease.sh/v3/covid-19/vaccine/coverage/countries/CH?lastdays=30&fullData=false\n  base_url &lt;- \"https://disease.sh/v3/covid-19/vaccine/coverage/countries\"\n  final_url &lt;- paste0(base_url, \"/\", country, \"?lastdays=\", period, \"&fullData=false\")\n\n  # perform  API call with httr2\n  req &lt;- request(final_url) \n  resp &lt;- req_perform(req)\n\n  # if request is not successful\n  if (resp_status(resp) != 200){\n    message(\"The request was not successful\")\n  }\n  else{\n    return(resp_body_json(resp))\n  }\n}\n\nget_country_vaccine_rates(\"CH\", 5)\n\n\n\n\n$country\n[1] \"Switzerland\"\n\n$timeline\n$timeline$`7/17/25`\n[1] 16940716\n\n$timeline$`7/18/25`\n[1] 16940716\n\n$timeline$`7/19/25`\n[1] 16940716\n\n$timeline$`7/20/25`\n[1] 16940716\n\n$timeline$`7/21/25`\n[1] 16940716"
+    "text": "Exercise Description\n\nuse the API documentation: https://disease.sh/docs/\nuse the template to write a function to get vaccination rates for a country\n\nlibrary(httr2)\n\nget_country_vaccine_rates &lt;- function(country = \"CH\", period = \"all\"){\n\n  base_url &lt;- \"...\"\n  final_url &lt;- \"...\"\n\n  # perform  API call with httr2\n  req &lt;- \"...\"(final_url) \n  resp &lt;- \"...\"(req)\n\n  # if request is not successful\n  if (resp_status(resp) != 200){\n    message(\"The request was not successful\")\n  }\n  else{\n    return(resp_body_json(resp))\n  }\n}\n\ncopy this template at: https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html"
   },
   {
     "objectID": "presentation.html#other-examples-of-apis-api-wrappers-for-economic-data",
     "href": "presentation.html#other-examples-of-apis-api-wrappers-for-economic-data",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Other examples of APIs & API wrappers for economic data",
     "text": "Other examples of APIs & API wrappers for economic data\n\nthe kofdata R Package (for KOF data)\nthe BFS R package (for Swiss federal statistics)\nthe fredapi Python Library (for US economic data)\nthe fredr data from the Federal Reserve Economic Data (FRED) API R package\npublic-apis a Github repository listing Public APIs"
   },
   {
     "objectID": "presentation.html#thank-you-for-your-attention",
     "href": "presentation.html#thank-you-for-your-attention",
-    "title": "Guest Lecture 2025",
+    "title": "APIs for Economic Data",
     "section": "Thank you for your attention!",
     "text": "Thank you for your attention!\nIf you are interested in working with us or if you have any questions:\n\nsource code: https://github.com/minnaheim/dh_guest_lecture_2025\nslides: https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html/\nfind us at rseed.ch\ncontact me: heim@kof.ethz.ch"
   },

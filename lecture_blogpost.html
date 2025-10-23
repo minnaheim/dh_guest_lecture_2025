@@ -153,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The reason why I am presenting this Economic Index to you, is because although this blog post is about APIs and their usage for economic data, we will go through the beginning of what it takes to create our own Economic Index - namely what it takes to efficiently get upwards of 300 time series.</p>
 <!-- Intro to my person here in the lecture... -->
-<p>Hopefully, by the end of this blog post, you will gain a better understanding of API’s and their usage, but moreover, you will have built your own API wrapper, and even potentially, your own API. All of this, will hopefully help you identify APIs in the real world - and realize, that APIs are used everywhere - from Art Museums to COVID-19 case rates.</p>
+<p>By the end of this blog post, you will gain a better understanding of API’s and their usage, but moreover, you will have built your own API wrapper, and even potentially, your own API. All of this will hopefully help you identify APIs in the real world - and realize, that APIs are used everywhere - from Art Museums to COVID-19 case rates.</p>
 <section id="getting-data-the-naive-way" class="level3">
 <h3 class="anchored" data-anchor-id="getting-data-the-naive-way">Getting Data, the Naive Way:</h3>
 <p>Let’s go back to our initial example: when trying to gather the data to build our economic Index, how would we do this?</p>
@@ -314,7 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Here is a visual example of how you might encounter the previous example in an API wrapper. Notice how the functionality stays the same, we can perform the same tasks, but see and interact with less of the complexity <strong>(=information hiding)</strong></p>
 <section id="use-the-bfs-api-wrapper-for-r" class="level4">
 <h4 class="anchored" data-anchor-id="use-the-bfs-api-wrapper-for-r">Use the BFS API Wrapper for R</h4>
-<p>Let’s go back to our example of getting data from the Swiss Federal Statistical Office (BFS). Since we have already imported and cleaned our gdp data, we want to move on to the next relevant time series. One other factor that could be a good predictor for economic activity in switzerland, could be energy consumption over time.</p>
+<p>Let’s go back to our example of getting data from the Swiss Federal Statistical Office (BFS). Since we have already imported and cleaned our gdp data, we want to move on to the next relevant time series. One other factor that could be a good predictor for economic activity in Switzerland is energy consumption over time.</p>
 <p>Luckily for us, we can use the BFS’ API wrapper, which is the <a href="https://cran.r-project.org/web/packages/BFS/index.html">BFS R Package</a> to get our energy data.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># devtools::install_github("lgnbhl/BFS")</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="fu">library</span>(BFS)</span>
@@ -370,6 +370,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 10 2009  1136915.</code></pre>
 </div>
 </div>
+</section>
+<section id="from-api-wrappers-to-apis-proper" class="level4">
+<h4 class="anchored" data-anchor-id="from-api-wrappers-to-apis-proper">From API Wrappers to APIs proper</h4>
 <p>In theory, we could be done with this example - using API wrappers instead of manually looking for data on the web makes it easier for us to scale our example - meaning we can easily fetch our 300 time series, with little extra effort.</p>
 <p>Still, to get a deeper understanding of how APIs work, we could also take a look at how API Wrappers work under the hood. Luckily for us, R packages like BFS are open source (like the R programming language) so we can see how a function such as <code>bfs_get_data</code> is written. We can go to the Package author’s github page, and <a href="https://github.com/lgnbhl/BFS/blob/master/R/bfs_get_data.R">find the function</a></p>
 <div class="quarto-figure quarto-figure-center">
@@ -392,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>In essence, the function uses the existing API to build a request, then perform it, and save the response body.</p>
 <p>Here, we build the request with the base URL, then append this URL with our endpoints which are the dataset ID and the language, and then perform the request and specify that the response body (which contains the data) should be in JSON.</p>
 <p>Important to mention here, is that these above functions are used to fetch the general structure of the data, i.e.&nbsp;the Units, and different data categories. This information is then being used, to fetch the actual data via the px-web API which is a way of distributing data that statistical offices like to use - but is rarely used outside of these circles - hence I won’t delve too deep into the matter. In principle, we could also use the functions presented above to get the data, and other API wrappers in R that you can find do so.</p>
-<p>We can also try running the final URL which we create with the above functions (until line 5) in our browser, as we did before, to see what the structure of our data looks like:</p>
+<p>We can also try running the final URL which we create with the above functions (up to line 5) in our browser, as we did before, to see what the structure of our data looks like:</p>
 <p><img src="img/browser.png" class="img-fluid"></p>
 </section>
 </section>
