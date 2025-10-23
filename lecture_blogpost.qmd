@@ -4,6 +4,7 @@ author: "Minna Heim"
 format:
   html:
     code-line-numbers: true
+    self-contained: true
 toc: false
 draft: false
 publishDate: "2025-10-21"
