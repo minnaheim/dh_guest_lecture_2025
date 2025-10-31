@@ -986,7 +986,7 @@ $timeline$recovered$`3/9/23`
 <section id="get-vaccine-rates" class="slide level2 smaller">
 <h2>GET Vaccine Rates</h2>
 <div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Code</a></li><li><a href="#tabset-5-2">Data</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">Code 1</a></li><li><a href="#tabset-5-2">Code 2</a></li><li><a href="#tabset-5-3">Data</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1">
 <div class="sourceCode" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">library</span>(httr2)</span>
@@ -1012,6 +1012,29 @@ $timeline$recovered$`3/9/23`
 <span id="cb11-21"><a></a><span class="fu">get_country_vaccine_rates</span>(<span class="st">"CH"</span>, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-5-2">
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(httr2)</span>
+<span id="cb12-2"><a></a></span>
+<span id="cb12-3"><a></a>get_country_vaccine_rates <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">country =</span> <span class="st">"CH"</span>, <span class="at">period =</span>  <span class="st">"all"</span>){</span>
+<span id="cb12-4"><a></a>  <span class="co"># https://disease.sh/v3/covid-19/vaccine/coverage/countries/CH?lastdays=30&amp;fullData=false</span></span>
+<span id="cb12-5"><a></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://disease.sh/v3/covid-19/vaccine/coverage/countries"</span></span>
+<span id="cb12-6"><a></a>  final_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(base_url, <span class="st">"/"</span>, country, <span class="st">"?lastdays="</span>, period, <span class="st">"&amp;fullData=false"</span>)</span>
+<span id="cb12-7"><a></a></span>
+<span id="cb12-8"><a></a>  <span class="co"># perform  API call with httr2</span></span>
+<span id="cb12-9"><a></a>  req <span class="ot">&lt;-</span> <span class="fu">request</span>(final_url) </span>
+<span id="cb12-10"><a></a>  resp <span class="ot">&lt;-</span> <span class="fu">req_perform</span>(req)</span>
+<span id="cb12-11"><a></a></span>
+<span id="cb12-12"><a></a>  <span class="co"># if request is not successful</span></span>
+<span id="cb12-13"><a></a>  <span class="cf">if</span> (<span class="fu">resp_status</span>(resp) <span class="sc">!=</span> <span class="dv">200</span>){</span>
+<span id="cb12-14"><a></a>    <span class="fu">message</span>(<span class="st">"The request was not successful"</span>)</span>
+<span id="cb12-15"><a></a>  }</span>
+<span id="cb12-16"><a></a>  <span class="cf">else</span>{</span>
+<span id="cb12-17"><a></a>    <span class="fu">return</span>(<span class="fu">resp_body_json</span>(resp))</span>
+<span id="cb12-18"><a></a>  }</span>
+<span id="cb12-19"><a></a>}</span>
+<span id="cb12-20"><a></a></span>
+<span id="cb12-21"><a></a><span class="fu">get_country_vaccine_rates</span>(<span class="st">"CH"</span>, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-5-3">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>$country
