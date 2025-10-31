@@ -172,13 +172,13 @@ The **request** (which is how we communicate to the server what we want it to do
 
 - one of the HTTP request methods, such as GET (to get data) and 
 - the **Where** which is Base URL, since it represents the location of the server.
-- the **Which service** is specified through the Endpoint, which dictates whether the client wants all data, just the data with a specific ID, the user with a specific ID, etc. 
+- the **Which service** is specified through the Endpoint, which dictates what the client wants to do, i.e. get data, users, etc.
 
 ![](/img/api_conceptual_3.png){fig-align="center"}
 
-- then the **how** is specified with additional parameters. You can think of them like search filters. There are 2 types of parameters:
+- then the **How** is specified with additional parameters. You can think of them like search filters. There are 2 main types of parameters:
     - *path parameters*, like `/users/{userID}` or 
-    - *request body parameters* like `/users?ID=userID` (& can also be used to separate multiple body params)
+    - *query parameters* like `/users?ID=userID` (& can also be used to separate multiple body params)
 
 ![](/img/api_conceptual_4.png){fig-align="center"}
 
@@ -194,11 +194,20 @@ Let's use what we've learnt to look at an example:
 
 ![](/img/api_url.png){fig-align="center"}
 
-Here, we're using the GET request method, the base URL of the met museum, the endpoint to the museum collections and to the search endpoint, and adding a keyword as a parameter to get the number of objects and IDs of objects which contain this keyword in their title.
+The Museum of Modern Art has an API which can be used to determine what kind of artworks they have, based on certain keywords in the artworks title.
+
+Example URL: [https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread](https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread)
+
+This is a GET request to the Met Museum Collection API. It consists of:
+
+- the base URL: https://collectionapi.metmuseum.org/public/collection/v1
+- the endpoint: /search
+- a query parameter: q=bread (the search keyword)
+
+The API returns JSON containing the total number of matching objects and an array of objectIDs for items that match the keyword. Try pasting the URL into your browser and replace "bread" with any other keyword to see different results.
 
 I encourage you to try out GET API call yourself, by putting in the URL of the Example into your browser and inputting your own search word. Since HTTP is used on the web, we can perform the GET request via our browser as well. 
 
-URL: [https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread](https://collectionapi.metmuseum.org/public/collection/v1/search?q=bread)
 
 ### API Wrappers
 
@@ -208,7 +217,7 @@ API wrappers usually allow you to do complex API calls in an easier environment 
 
 ![](/img/api_wrapper.png){fig-align="center"}
 
-Here is a visual example of how you might encounter the previous example in an API wrapper. Notice how the functionality stays the same, we can perform the same tasks, but see and interact with less of the complexity **(=information hiding)**
+Here is a visual example of how you might encounter the previous example in an API wrapper. Notice how the functionality stays the same, we can perform the same tasks, but see and interact with less of the complexity, this is also something we call information hiding.
 
 
 #### Use the BFS API Wrapper for R
@@ -225,8 +234,8 @@ library(BFS)
 # to inspect functions, use ?function, e.g. 
 ?bfs_get_catalog_data
 
-bfs_get_catalog_data(language = "en", title = "energy")
-dataset_nr <- "px-x-0204000000_106"
+catalog <- bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- catalog$number_bfs[1] 
 energy_df <- bfs_get_data(dataset_nr, lang = "en")
 
 # filter only total energy accounts
@@ -267,8 +276,8 @@ library(BFS)
 # to inspect functions, use ?function, e.g. 
 ?bfs_get_catalog_data
 
-# bfs_get_catalog_data(language = "en", title = "energy")
-dataset_nr <- "px-x-0204000000_106"
+catalog <- bfs_get_catalog_data(language = "en", title = "energy")
+dataset_nr <- catalog$number_bfs[1] 
 energy_df <- bfs_get_data(dataset_nr, lang = "en")
 
 # filter only total energy accounts
@@ -293,7 +302,7 @@ In theory, we could be done with this example - using API wrappers instead of ma
 
 Still, to get a deeper understanding of how APIs work, we could also take a look at how API Wrappers work under the hood. Luckily for us, R packages like BFS are open source (like the R programming language) so we can see how a function such as `bfs_get_data` is written. We can go to the Package author's github page, and [find the function](https://github.com/lgnbhl/BFS/blob/master/R/bfs_get_data.R)
 
-![](img/bfs_get_data.png){fig-align="center"}
+![](img/bfs_get_data.png){fig-align="center" width="80% "}
 
 This might look a bit complex, so let's break it down by looking at the essential code: 
 
@@ -301,7 +310,7 @@ This might look a bit complex, so let's break it down by looking at the essentia
 bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_type = "text", variable_value_type = "text", clean_names = FALSE, delay = NULL) {
   # base url
   df_json <- httr2::request("https://www.pxweb.bfs.admin.ch/api/v1") %>%
-    # add endpoints 
+    # add path params 
     httr2::req_url_path_append(paste0(language, "/", number_bfs, "/", number_bfs, ".px")) %>%
     httr2::req_retry(max_tries = 2, max_seconds = 10) %>%
     # executre request
@@ -312,11 +321,11 @@ bfs_get_data <- function(number_bfs, language = "de", query = NULL, column_name_
 <!-- TODO: add explanation about pxweb -->
 In essence, the function uses the existing API to build a request, then perform it, and save the response body. 
 
-Here, we build the request with the base URL, then append this URL with our endpoints which are the dataset ID and the language, and then perform the request and specify that the response body (which contains the data) should be in JSON.
+Here, we build the request with the base URL, then append this URL with our path parameters which are the dataset ID and the language, and then perform the request and specify that the response body (which contains the data) should be in JSON.
 
 Important to mention here, is that these above functions are used to fetch the general structure of the data, i.e. the Units, and different data categories. This information is then being used, to fetch the actual data via the px-web API which is a way of distributing data that statistical offices like to use - but is rarely used outside of these circles - hence I won't delve too deep into the matter. In principle, we could also use the functions presented above to get the data, and other API wrappers in R that you can find do so.
 
-We can also try running the final URL which we create with the above functions (up to line 5) in our browser, as we did before, to see what the structure of our data looks like:
+We can also try running the final URL which we create with the above functions (up to line 5) in our browser[^3], as we did before, to see what the structure of our data looks like:
 
 ![](img/browser.png)
 
@@ -372,7 +381,7 @@ Selecting one endpoint to try out, we can identify the historical case counts of
 
 When trying out the endpoint, we can even get the data as responses, and see all of the components of a real API call. 
 
-Let's try to turn this example into an actual function
+Let's try to turn this example into an actual function:
 
 
 ```r
@@ -431,7 +440,7 @@ Here it's important to note that the Johns Hopkins University apparently stopped
 
 ### Your turn! 
 
-Use the same documentation as above ([disease.sh docs](https://disease.sh/docs/)) to get the historical vaccination rates of a country.
+Use the same documentation as above ([disease.sh docs](https://disease.sh/docs/)) to get the historical vaccination doses delivered for a specific country.
 
 Try out the desired endpoint using the documentation, before writing your own function.
 
@@ -440,7 +449,7 @@ Feel free to use this function as a template:
 ```r
 library(httr2)
 
-get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all")){
+get_country_vaccine_counts <- function(country = "CH", period = c(30,365, "all")){
 
   base_url <- "..."
   final_url <- "..."
@@ -460,7 +469,7 @@ get_country_vaccine_rates <- function(country = "CH", period = c(30,365, "all"))
 
 ```
 
-Try out your built function! What does it return?
+Try out your built function! What does it return?[^4]
 
 Congratulations on adding one more dataset to your collection for your economic indicator. 
 
@@ -474,8 +483,196 @@ But, it doesn't stop here! There are many other API (Wrappers) in R that you can
 - [public-apis](https://github.com/public-apis/public-apis) a Github repository listing Public APIs
 
 
-In case you have any questions, feel free to contact me :) [heim@kof.ethz.ch](mailto:heim@kof.ethz.ch)
+## Bonus: Build Your own API:
+
+In case this is still not enough for you, and you not only want to know how to build use and build API wrapper, but you also want to build your own (web) API, I've got just the exercise for you. 
+
+With the [plumber R package](https://www.rplumber.io/) you can build your own web API, to get an even deeper understanding of what APIs do, and how to build one, using R. 
+
+You could use the plumber package to replicate the KOF API, which provides users the ability to get a lot of different public time series data which the Swiss Economic Institute (KOF-ETH) produces and provides. To do this, just follow the example below:
+
+### Example: Building a KOF Barometer API - The Basic Menu
+
+Think of building this API and it's endpoint as a different service your API restaurant offers. Think of it like the layers of an onion: start simple, then add layers of functionality as needed. Begin with the outermost, easiest layer:
+
+- an "Everything Please" endpoint that returns the full time series — and show students how to save and run that in `plumber` (a lightweight R package that turns R functions into web APIs) before introducing the next layer.  
+- a "Custom Order" endpoint that accepts start/end parameters and uses a helper to slice the series, so that users only get the time series in the time frame they want it.
+
+1. **The "Everything Please" endpoint**
+
+- using the `GET` HTTP request
+- fetch the complete time series using the endpoint `/data`
+
+```r
+library(plumber)
+#* Return entire KOF Barometer time series
+#* @get /data
+function() {
+  # the partition_ts function will be explained below!
+  partition_ts(data$kofbarometer)
+}
+```
+
+When you run your API, you get an interactive documentation interface (called Swagger) that looks like this:
+
+
+![API Endpoint Overview](img/endpoints.png)
+
+Important to note here, is that you can see 3 different endpoints here (`/data`, `/filtered_data` and `/plotting` because those are the 3 endpoints we will create throughout this example, for now, just focus on the endpoint we just created: `/data`)
+
+![The "Everything Please"](img/data_endpoint.png)
+
+Since we just created the `/data` endpoint, see code snippet above, we will try it out and see the Response Body, which contains the entire Konjunkturbarometer time series.
+
+
+
+2. **The "Custom Order" endpoint** 
+
+- creates the endpoint `/filtered_data` which
+- lets users specify date ranges as parameters:
+- e.g.`/data?start=2020&end=2024` (Hint: these are the query parameters we introduced before)
+
+```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
+# install the latest version
+# devtools::install_github("KOF-ch/kofdata")
+library(kofdata) 
+# list_available_collections()
+data <- get_time_series("kofbarometer", show_progress = TRUE)
+str(data$kofbarometer)
+```
+
+For this, we first need to create a function `partition_ts` which takes the parameters the API users pass to the endpoint, i.e. a start and end date. We then partition the time series according to those parameters. 
+
+```r
+#* @param ts time series object
+#* @param start date at which ts should start - can be years only, or c(year, month)
+#* @param end date at which ts should end - can be years only, or c(year, month)
+
+partition_ts <- function(ts, start = NULL, end = NULL) {
+  if (inherits(ts, "ts")) {
+    # setting start and end date if unset
+    if (is.null(end)) {
+      end <- time(ts)[length(ts)]
+    }
+    if (is.null(start)) {
+      start <- time(ts)[1]
+    }
+    # filter ts based on start & end dates
+    ts <- window(ts, start = start, end = end)
+  } else {
+    warning("Input is not a ts object")
+    return(NULL)
+  }
+  return(ts)
+}
+```
+
+```{r, echo=FALSE, results=FALSE, warnings=FALSE, messages=FALSE}
+#* @param start date at which ts should start - can be years only, or c(year, month)
+#* @param end date at which ts should end - can be years only, or c(year, month)
+
+partition_ts <- function(ts, start = NULL, end = NULL) {
+  if (inherits(ts, "ts")) {
+    # setting start and end date if unset
+    if (is.null(end)) {
+      end <- time(ts)[length(ts)]
+    }
+    if (is.null(start)) {
+      start <- time(ts)[1]
+    }
+    # filter ts based on start & end dates
+    ts <- window(ts, start = start, end = end)
+  } else {
+    warning("Input is not a ts object")
+    return(NULL)
+  }
+  return(ts)
+}
+# let's pretend the data comes from my own source
+partition_ts(data$kofbarometer, end = c(2010, 2))
+```
+
+We use the `partition_ts` function to create our new endpoint function
+
+```r
+#* Return KOF Barometer data with custom date range
+#* @param start the start year to filter by
+#* @param end the end year to filter by
+#* @get /filtered_data
+function(start = NULL, end = NULL) {
+  if (!is.null(start)) {
+    start <- as.numeric(start)
+  }
+  if (!is.null(end)) {
+    end <- as.numeric(end)
+  }
+
+  partition_ts(
+    data$kofbarometer,
+    start = start,
+    end = end
+  )
+}
+```
+
+Let's create our own API that shares KOF Barometer data. We'll build endpoints where users can:
+
+- using the same endpoint from above
+- Get data from specific periods: `/data?start=2020&end=2024`
+- Even get a chart: `/plot`
+
+Let's test the `/filtered_data` endpoint by requesting KOF Barometer data from 2010 onwards:
+
+![Setting parameters for your API request](img/set_params.png)
+
+Hit "Execute" and voila—the Server response shows the exact data requested:
+
+![Your API returning filtered economic data](img/get_requests.png)
+
+
+
+3. **The "Visual Takeaway" endpoint** 
+
+- we create the `/plotting` endpoint
+- using the `GET` request, we return ready-made charts: 
+
+```r
+#* Return KOF Barometer chart as PNG
+#* @serializer png
+#* @get /plotting
+function() {
+  plot(data$kofbarometer)
+}
+```
+
+![Using the /plotting Endpoint](img/plot_endpoint.png)
+
+
+**Important to Note**: The images you see above is the API Documentation which is automatically generated when using the plumber R package. Swagger is your API's user-friendly interface, but behind the scenes, your API users will interact with your API through HTTP requests, as already shown above. In this example, a Get Request can be executed in the browser like this:
+
+![How real API calls work in practice](img/real_call.png)
+
+
+If you want to test out how to use the plumber R package to create your own API, incl. the API documentation ,  then I encourage you to do so. However, for this, consult the [plumber documentation](https://www.rplumber.io/) and make sure to do this:
+
+::: {.callout-tip}
+## Testing Your API Locally
+
+Save all three functions in a file called `plumber.R` in the base of your working directory, then launch your API:
+
+```r
+# Launch your API on port 8000
+pr("plumber.R") %>%
+  pr_run(port=8000)
+```
+:::
+
+Congratulations! You've just built your own API! 
+
+I hope you were able to learn something through this blog post, whether that is how APIs and APIs wrapper work and look like, or even how to build your own API (wrapper). In case you have any questions, feel free to contact me at [heim@kof.ethz.ch](mailto:heim@kof.ethz.ch)
 
 
 [^1]: https://kof.ethz.ch/en/forecasts-and-indicators/indicators/kof-economic-barometer.html
 [^2]: https://www.dontusethiscode.com/blog/2024-11-20_pandas_reshaping.html
+[^3]: Try executing the Get Request yourself in your browser: https://www.pxweb.bfs.admin.ch/api/v1/en/px-x-0204000000_106/px-x-0204000000_106.px 
+[^4]: If you want to take a look at a sample solution of this task, check out: https://minnaheim.github.io/dh_guest_lecture_2025/presentation.html#/get-vaccine-rates
